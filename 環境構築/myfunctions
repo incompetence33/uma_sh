@@ -1,0 +1,37 @@
+alias apt="sudo apt"
+alias apu="apt update"
+alias apug="apt -y full-upgrade"
+yokosen(){
+    if [ -n "${TERM}" ];
+      then SCREEN_WIDTH=$(tput cols);
+      else SCREEN_WIDTH=20;
+    fi
+    LINEWORD="-"
+    if [ -n "$1" ]; then
+      LINEWORD="$1"
+    fi
+    printf -v _hr "%*s" ${SCREEN_WIDTH} && echo ${_hr// /${1-${LINEWORD}}}
+}
+
+dircp (){
+	#cpするときに足りないディレクトリを勝手に作ってくれます。
+	if [[ "${2}" == */* ]]; then
+		if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
+			mkdir -p "${2/\/$(basename "${2}")}"
+		fi
+	fi
+	cp -r "${1}" "${2}"
+}
+dirmv (){
+	#mvするときに足りないディレクトリを勝手に作ってくれます。
+	if [[ "${2}" == */* ]]; then
+		if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
+			mkdir -p "${2/\/$(basename "${2}")}"
+		fi
+	fi
+	mv "${1}" "${2}"
+}
+cmkdir (){
+	mkdir -p "${1}"
+	cd "${1}"
+}
