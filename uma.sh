@@ -22,7 +22,7 @@ install_vgmstream(){
 	echo "tmp_comにvgmstreamをビルドしてインストールします。"
 	FLAG=1
 	yes_or_no
-	if [[ ! INSTALL_FLAG == 1 ]]; then return 1;fi
+	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
 	IWILLBEBACK="${PWD}"
 	mkdir -p ${HOME}/tmp_com/bin
 	sudo apt update 
@@ -48,7 +48,7 @@ install_sqlite(){
 	echo "apt でsqlite3をインストールします。"
 	FLAG=1
 	yes_or_no
-	if [[ ! INSTALL_FLAG == 1 ]]; then return 1;fi
+	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
 	sudo apt update &&\
 	sudo apt upgrade -y &&\
 	sudo apt install sqlite3 perl -y
@@ -57,7 +57,7 @@ install_fzf(){
 	echo "githubからfzfをインストールします。"
 	FLAG=1
 	yes_or_no
-	if [[ ! INSTALL_FLAG == 1 ]]; then return 1;fi
+	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
 	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
 	yes | ~/.fzf/install
 }
