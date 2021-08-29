@@ -89,15 +89,20 @@ BASE_POINT="${PWD}"
 ASSET_TYPE="_3d_cutt announce atlas bg chara gacha gachaselect guide home imageeffect item lipsync live loginbonus minigame mob outgame paddock race single story storyevent supportcard transferevent uianimation"
 #アセットの種類を選択するときに使います。
 
-while getopts "cfprh" OPT;do
+while getopts "cfprUh" OPT;do
 	case $OPT in
 		"c" ) COPYFLAG=1;;
 		"f" ) COPYFLAG=2;;
-		"p" ) read -e -p "出力先の名前を入力してください。:" PREFIX
+		"p" ) read -e -p "任意の出力先のフォルダー名を入力してください。:" PREFIX
 			if [[ ${PREFIX} == '' || ${PREFIX} == "* *" ]];then PREFIX="解析/";fi
 			echo "出力先を${PREFIX}とします。"
 			#空白や何も入力されてないとルートに書き込もうとする可能性があるので回避しておきます。
 			#スペースもエラーの元なのでスペースが入っている場合もデフォルトに戻します。
+			;;
+		"U" ) if [[ ! -d script_uma ]]; then git clone --depth 1 https://github.com/incompetence33/uma_sh.git script_uma;fi
+			cd script_uma && git pull && cd "${BASE_POINT}"
+			if [[ ! -L uma.sh ]]; then rm -f uma.sh;ln -s script_uma/uma.sh;fi
+			exit 0
 			;;
 		* )
 			echo "-c :"
@@ -107,9 +112,14 @@ while getopts "cfprh" OPT;do
 			echo "-p :"
 			echo "	出力先のフォルダ名を変更できます(非推奨)。"
 			echo "	ただしスペースを名前に含めることはできません。"
+			echo "-U :"
+			echo "	スクリプトをアップデートします。"
+			echo "	このオプションを初めて実行する場合ならumamusumeフォルダーにgit cloneされます。"
+			echo "	そうでない場合はgit pullするだけです。"
+			echo "	シンボリックリンクを作成するのですでにumamusumeフォルダーにuma.shというファイルがある場合削除しておいて下さい。"
 			echo "-h :"
-			echo "	ヘルプを表示します。" ;
-			exit 0
+			echo "	ヘルプを表示します。" 
+			exit 0;
 	esac
 done
 
