@@ -196,7 +196,7 @@ copy_files (){
 	while [[ ${MAX} -ge ${PROGRESS} ]]; do
 		dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'')
 		#${PROGRESS}行目から、要素1(ハッシュファイル名)、要素(元の名前と場所)を取得してコピーします。
-		echo -ne "進度: (${PROGRESS}/${MAX} (スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))\c"
+		echo -ne "進度: (${PROGRESS}/${MAX} (コピーされた数: ${COPYED_FILE} スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))\c"
 		echo -ne "\r\c"
 		((PROGRESS++))
 	done
