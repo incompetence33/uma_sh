@@ -1,5 +1,6 @@
 #!/bin/bash
-if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
+if [[ ! $(basename "${PWD}") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
+if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
 export PATH="${HOME}/tmp_com/bin:${PATH}"
 #このスクリプトでvgmstreamをインストールするとここにインストールされるのでPATHを通します。
 yes_or_no(){
