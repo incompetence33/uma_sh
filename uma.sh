@@ -62,8 +62,6 @@ install_fzf(){
 	yes | ~/.fzf/install
 }
 
-if [[ ! $(type sqlite3) ]];then echo "sqlite3コマンドがないようです。";install_sqlite;fi
-if [[ ! $(type fzf) ]];then echo "fzfコマンドがないようです。";install_fzf;fi
 if [[ $(type vgmstream-cli 2>/dev/null) ]];then 
 	VGMSTREAM="vgmstream-cli"
 elif [[ $(type vgmstream_cli 2>/dev/null) ]]; then
@@ -72,6 +70,8 @@ else
 	echo "vgmstream-cliコマンドがないようです。"
 	install_vgmstream
 fi
+if [[ ! $(type fzf) ]];then echo "fzfコマンドがないようです。";install_fzf;fi
+if [[ ! $(type sqlite3) ]];then echo "sqlite3コマンドがないようです。";install_sqlite;fi
 
 if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップ行程が終了しました。";echo "もう一度スクリプトを実行し直してください。";exit 0;fi
 #ここまで環境の確認と足りないもののインストール。
