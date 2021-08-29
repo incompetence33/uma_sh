@@ -82,7 +82,6 @@ if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップ行程が終了し�
 PREFIX="解析"
 COPYFLAG=0
 
-
 BASE_POINT="${PWD}"
 #cdしたあと絶対パスでもとに戻れるようにします。
 
