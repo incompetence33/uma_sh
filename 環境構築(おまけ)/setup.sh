@@ -13,7 +13,7 @@ read -e -p "よろしければなにかキーを押してください。"
 if [[ ! -e zshrc && ! -e myfunctions ]]; then echo "zshrc と myfunctionsがこのスクリプトと同じ階層にありません。";echo "自分でちゃんと.zshrcくらい作ってる！って方はこのスクリプトの9行目をコメントアウトか削除してください。";exit 1;fi
 BASE_POINT="${PWD}"
 mv zshrc ~/.zshrc
-cd myfunctions ~/.myfunctions
+mv myfunctions ~/.myfunctions
 cd ~
 sudo sed -i.bak -e "s/http:\/\/archive\.ubuntu\.com/http:\/\/jp\.archive\.ubuntu\.com/g" /etc/apt/sources.list
 sudo apt update && \
