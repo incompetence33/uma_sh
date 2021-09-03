@@ -82,6 +82,7 @@ if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップ行程が終了し�
 ###############
 PREFIX="解析"
 COPYFLAG=0
+PARALLEL=1
 
 BASE_POINT="${PWD}"
 #cdしたあと絶対パスでもとに戻れるようにします。
@@ -89,10 +90,26 @@ BASE_POINT="${PWD}"
 ASSET_TYPE="_3d_cutt announce atlas bg chara gacha gachaselect guide home imageeffect item lipsync live loginbonus minigame mob outgame paddock race single story storyevent supportcard transferevent uianimation"
 #アセットの種類を選択するときに使います。
 
-while getopts "cfprUh" OPT;do
+while getopts "cfj:prUh" OPT;do
 	case $OPT in
 		"c" ) COPYFLAG=1;;
 		"f" ) COPYFLAG=2;;
+		"j" ) PARALLEL=${OPTARG}
+			if [[ "$PARALLEL" =~ ^[0-9]+$ ]]; then
+				if [[ ${PARALLEL} -le 20 && ${PARALLEL} -ge 1 ]]; then
+					echo "コピーの並列処理数を${PARALLEL}に設定しました。"
+				else
+					PARALLEL=1
+					echo "並列処理数は20以下1以上で入力してください。"
+					echo "よって1に再設定されました。"
+					read -e -n1 -p "わかりましたら何かキーを押してください。"
+				fi
+			else
+				echo "数値を入力してください。"
+				echo "よって1に再設定されました。"
+				read -e -n1 -p "わかりましたら何かキーを押してください。"
+			fi
+			;;
 		"p" ) read -e -p "任意の出力先のフォルダー名を入力してください。:" PREFIX
 			if [[ ${PREFIX} == '' || ${PREFIX} == "* *" ]];then PREFIX="解析/";fi
 			echo "出力先を${PREFIX}とします。"
@@ -109,6 +126,13 @@ while getopts "cfprUh" OPT;do
 			echo "	コピーするときにサイズを比較して等しい場合スキップします。"
 			echo "-f :"
 			echo "	コピーするとき全てのファイルをコピーします。"
+			echo "-j :"
+			echo "	./uma.sh -j2"
+			echo "	./uma.sh -j 2"
+			echo "	このようにすることでコピーするときの並列処理数を20以下1以上の整数で設定できます。"
+			echo "	あんまり数を増やすとパソコンが壊れないか心配なので上限を設けました。"
+			echo "	20を超える数や数値以外が入力された場合1に設定し直されます。"
+			echo "	いまのところコピーされた数などが正常に表示できないことを、ご了承ください。"
 			echo "-p :"
 			echo "	出力先のフォルダ名を変更できます(非推奨)。"
 			echo "	ただしスペースを名前に含めることはできません。"
@@ -202,14 +226,17 @@ copy_files (){
 	COPYED_FILE=0
 	NOT_FOUND=0
 	echo "目的のファイルをコピーしています……"
-	echo -ne "進度: (${PROGRESS}/${MAX} (スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))\c"
+	echo -ne "進度: (${PROGRESS}/${MAX} (コピーされた数: ${COPYED_FILE} スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))\c"
 	echo -ne "\r\c"
 	while [[ ${MAX} -ge ${PROGRESS} ]]; do
+		for C_JOB in $(seq 2 $((PARALLEL)));do
+			dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}+${C_JOB}-1'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'') &\
+		done
 		dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'')
 		#${PROGRESS}行目から、要素1(ハッシュファイル名)、要素(元の名前と場所)を取得してコピーします。
 		echo -ne "進度: (${PROGRESS}/${MAX} (コピーされた数: ${COPYED_FILE} スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))\c"
 		echo -ne "\r\c"
-		((PROGRESS++))
+		((PROGRESS +=${PARALLEL}))
 	done
 	echo "進度: ($((PROGRESS-1))/${MAX} (コピーされた数: ${COPYED_FILE} スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))"
 	#処理数が実際より1多くなってしまうのでここで減らしています()
