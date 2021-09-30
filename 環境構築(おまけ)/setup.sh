@@ -17,7 +17,7 @@ mv myfunctions ~/.myfunctions
 cd ~
 sudo sed -i.bak -e "s/http:\/\/archive\.ubuntu\.com/http:\/\/jp\.archive\.ubuntu\.com/g" /etc/apt/sources.list
 sudo apt update && \
-sudo apt install aria2 audacious audacious-dev autoconf automake build-essential cmake curl g++ gcc git lame language-pack-ja libao-dev libglib2.0-dev libgtk2.0-dev liblz4-tool libmpg123-dev libpango1.0-dev libspeex-dev libtool libvorbis-dev make manpages-ja manpages-ja-dev nkf peco perl pkg-config rename sqlite3 tar unar unzip vim x11-utils zsh
+sudo apt install aria2 audacious audacious-dev autoconf automake build-essential cmake curl flex g++ gcc git lame language-pack-ja libao-dev libglib2.0-dev libgtk2.0-dev liblz4-tool libmpg123-dev libpango1.0-dev libspeex-dev libtool libvorbis-dev make manpages-ja manpages-ja-dev nkf peco perl pkg-config rename sqlite3 tar unar unzip vim x11-utils zsh
 echo "デフォルトのShellをBashからZshにします。"
 echo "パスワードを入力してください。"
 sudo sed '$a /bin/zsh' /etc/shells
