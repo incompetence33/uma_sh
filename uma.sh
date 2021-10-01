@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ ! $(basename "${PWD}") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
 if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
-export PATH="${HOME}/tmp_com/bin:${PATH}"
+export PATH="${HOME}/tmp_com/bin:${HOME}/commands/bin:${PATH}"
 #このスクリプトでvgmstreamをインストールするとここにインストールされるのでPATHを通します。
 yes_or_no(){
 	read -e -n1 -p "よろしいですか?[Y/n]:" YN
@@ -16,8 +16,8 @@ yes_or_no(){
 		INSTALL_FLAG=0;;
 	esac
 }
-
-
+###vgmstreamのインストールは不安定なので公式からバイナリをダウンロードすることにしました。
+<<COMMENTOUT
 install_vgmstream(){
 	#~/ で組み立てることでWSL2ならWSLのコンテナ内なのでウイルス対策ソフトの影響を受けずに組み立てられると思いこのような形にしました。
 	echo "tmp_comにvgmstreamをビルドしてインストールします。"
@@ -45,6 +45,25 @@ install_vgmstream(){
 	cd "${IWILLBEBACK}"
 	if [[ ! ${SUCCESS} == 0 ]]; then echo "インストールに失敗している可能性があります。";fi
 }
+COMMENTOUT
+###
+install_vgmstream(){
+	##インストールばしょを「~/commands」にすることにしました。
+	##いらんかったら消してくれって意味でいままで「~/tmp_com」って名前にしてたんだけどよくわからんしな。
+	##ただ、どっちにあっても大丈夫なようにはしておくので、バイナリの配置場所をいまから変える必要はないです。
+	echo "~/commands/binにvgmstreamをビルドしてインストールします。"
+	FLAG=1
+	yes_or_no
+	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
+	sudo apt update 
+	sudo apt upgrade -y
+	sudo apt install tar git sqlite3
+	mkdir -p ~/commands/bin
+	wget $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'linux/vgmstream-cli.tar.gz')
+	tar -xvf vgmstream-cli.tar.gz -C ~/commands/bin
+	rm vgmstream-cli.tar.gz
+}
+
 install_sqlite(){
 	echo "apt でsqlite3をインストールします。"
 	FLAG=1
@@ -52,7 +71,7 @@ install_sqlite(){
 	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
 	sudo apt update &&\
 	sudo apt upgrade -y &&\
-	sudo apt install sqlite3 perl -y
+	sudo apt install sqlite3 perl git -y
 }
 install_fzf(){
 	echo "githubからfzfをインストールします。"
