@@ -78,6 +78,7 @@ install_fzf(){
 	FLAG=1
 	yes_or_no
 	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
+	rm -rf ~/.fzf
 	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
 	yes | ~/.fzf/install
 }
@@ -271,9 +272,19 @@ kyoukaisen(){
 }
 meta_analyze(){
 	#metaを展開します。
-	rm -f output_meta.txt
-	echo -ne ".output output_meta.txt \n.dump" | sqlite3 meta
+	rm -f output_meta_tmp.txt
+	echo -ne ".output output_meta_tmp.txt \n.dump" | sqlite3 meta
 	#なんかインデントするとエラーが出てしまうのでechoの拡張で対応した。
+	if [[ ${COPYFLAG} == 0 ]]; then 
+		if [[ -f output_meta.txt ]]; then 
+			if ! $(diff -q output_meta.txt output_meta_tmp.txt > /dev/null 2>&1); then 
+				COPYFLAG=1
+				echo "metaファイルが更新されているようなので、サイズを比較して差異があった場合コピーするモードで実行します。"
+			fi
+		fi
+	fi
+	mv output_meta_tmp.txt output_meta.txt
+	sleep 1
 }
 
 make_list(){
