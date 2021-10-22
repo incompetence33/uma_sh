@@ -1,0 +1,26 @@
+test-f(){
+  test -f $1
+}
+
+yokosen(){
+    if [ -n "${TERM}" ];
+      then SCREEN_WIDTH=$(tput cols);
+      else SCREEN_WIDTH=20;
+    fi
+    LINEWORD="-"
+    if [ -n "$1" ]; then
+      LINEWORD="$1"
+    fi
+    printf -v _hr "%*s" ${SCREEN_WIDTH} && echo ${_hr// /${1-${LINEWORD}}}
+}
+
+#ダウンロードは時間をかけたくないものさ。
+alias aria2="aria2c -x16 -s16 -k1M "
+alias aria2g="aria2c -x4 -s4 -k10M "
+alias aria22="aria2c -x2 -s2 -k10M "
+
+#pacmanのエイリアス
+alias pacss='pacman -Ss '
+alias pacs='pacman -S '
+alias pacu='pacman -Syyu'
+

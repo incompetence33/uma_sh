@@ -1,4 +1,10 @@
 #!/bin/bash
+LANG="ja_JP.UTF-8"
+DIST_FLAG=0
+BASE_POINT="${PWD}"
+#cdしたあと絶対パスでもとに戻れるようにします。
+DISTRIBUTION="$(cat /etc/os-release | grep "^NAME=" |awk -F '=' '{gsub(/"/,"",$2);printf $2"\n"}')"
+if [[ ! "${DISTRIBUTION}" == *buntu ]]; then echo "どうやらUbuntuで実行されていないようです。";echo "エラーがでたら自分で何とかしてくれると助かります。";DIST_FLAG=1;sleep 1;fi
 if [[ ! $(basename "${PWD}") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
 if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
 export PATH="${HOME}/tmp_com/bin:${HOME}/commands/bin:${PATH}"
@@ -17,6 +23,7 @@ yes_or_no(){
 	esac
 }
 ###vgmstreamのインストールは不安定なので公式からバイナリをダウンロードすることにしました。
+###一応古いソースから自分でビルドしたい人向けに残しておきます。
 <<COMMENTOUT
 install_vgmstream(){
 	#~/ で組み立てることでWSL2ならWSLのコンテナ内なのでウイルス対策ソフトの影響を受けずに組み立てられると思いこのような形にしました。
@@ -47,32 +54,58 @@ install_vgmstream(){
 }
 COMMENTOUT
 ###
-install_vgmstream(){
-	##インストールばしょを「~/commands」にすることにしました。
-	##いらんかったら消してくれって意味でいままで「~/tmp_com」って名前にしてたんだけどよくわからんしな。
-	##ただ、どっちにあっても大丈夫なようにはしておくので、バイナリの配置場所をいまから変える必要はないです。
-	echo "~/commands/binにvgmstreamをビルドしてインストールします。"
-	FLAG=1
-	yes_or_no
-	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
-	sudo apt update 
-	sudo apt upgrade -y
-	sudo apt install tar git sqlite3
-	mkdir -p ~/commands/bin
-	wget $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'linux/vgmstream-cli.tar.gz')
-	tar -xvf vgmstream-cli.tar.gz -C ~/commands/bin
-	rm vgmstream-cli.tar.gz
-}
-
-install_sqlite(){
-	echo "apt でsqlite3をインストールします。"
-	FLAG=1
-	yes_or_no
-	if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
-	sudo apt update &&\
-	sudo apt upgrade -y &&\
-	sudo apt install sqlite3 perl git -y
-}
+if [[ ${DIST_FLAG} == 0 ]]; then
+	install_vgmstream(){
+		##インストールばしょを「~/commands/bin」にすることにしました。
+		##いらんかったら消してくれって意味でいままで「~/tmp_com」って名前にしてたんだけどよくわからんしな。
+		##ただ、どっちにあっても大丈夫なようにはしておくので、バイナリの配置場所をいまから変える必要はないです。
+		echo "~/commands/binにvgmstreamをビルドしてインストールします。"
+		FLAG=1
+		yes_or_no
+		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
+		sudo apt update 
+		sudo apt upgrade -y
+		sudo apt install tar git sqlite3
+		mkdir -p ~/commands/bin
+		wget $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'linux/vgmstream-cli.tar.gz')
+		tar -xvf vgmstream-cli.tar.gz -C ~/commands/bin
+		rm vgmstream-cli.tar.gz
+	}
+	install_sqlite(){
+		echo "apt でsqlite3をインストールします。"
+		FLAG=1
+		yes_or_no
+		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
+		sudo apt update &&\
+		sudo apt upgrade -y &&\
+		sudo apt install sqlite3 perl git -y
+	}
+else
+	install_vgmstream(){
+		echo "~/commands/binにvgmstreamをビルドしてインストールします。"
+		FLAG=1
+		yes_or_no
+		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
+		mkdir -p ~/commands/bin
+		mkdir -p ~/tmp_vg_install
+		echo $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip')
+		wget -P ~/tmp_vg_install $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip') 
+		unzip ~/tmp_vg_install/vgmstream-win.zip -d ~/tmp_vg_install
+		read
+		mv ~/tmp_vg_install/test.exe ~/tmp_vg_install/vgmstream-cli.exe
+		mv ~/tmp_vg_install/*.dll ~/tmp_vg_install/*.exe ~/commands/bin
+		rm -rf ~/tmp_vg_install
+	}
+	install_sqlite(){
+		echo "pacman でsqlite3をインストールします。"
+		FLAG=1
+		yes_or_no
+		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
+		pacman -Syy
+		pacman -S mingw-w64-ucrt-x86_64-sqlite3 git
+		pacman -Su
+	}
+fi
 install_fzf(){
 	echo "githubからfzfをインストールします。"
 	FLAG=1
@@ -104,8 +137,6 @@ PREFIX="解析"
 COPYFLAG=0
 PARALLEL=1
 
-BASE_POINT="${PWD}"
-#cdしたあと絶対パスでもとに戻れるようにします。
 
 ASSET_TYPE="_3d_cutt announce atlas bg chara gacha gachaselect guide home imageeffect item lipsync live loginbonus minigame mob outgame paddock race single story storyevent supportcard transferevent uianimation"
 #アセットの種類を選択するときに使います。
@@ -336,7 +367,7 @@ awbtowav(){
 		#その部分はそのawbに何トラック入っているかを表しているため。
 		if [[ ! $(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)"* 2> /dev/null | wc -l) == ${MAXTRACK} ]]; then
 			#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
-			#差分だけできないか試しましたがうまく出来そうになかったのでやめました。
+			#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
 			for TRACK in $(seq -w 0001 ${MAXTRACK});do
 				${VGMSTREAM} -s ${TRACK} -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
 				echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})\c"

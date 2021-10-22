@@ -1,12 +1,12 @@
 #!/bin/bash
+DISTRIBUTION="$(cat /etc/os-release | grep "^NAME=" |awk -F '=' '{gsub(/"/,"",$2);printf $2"\n"}')"
+setup_ubuntu(){
 LANG="ja_JP.UTF-8"
 echo "これは簡易的な環境構築スクリプトです。"
 echo "Wslをインストールしてこれから環境を0から作らなければいけない方向けのスクリプトです。"
 echo "これを実行するとログインShellはZshになります。"
 echo "oh-my-zshやPreztoみたいなものは導入しません。"
 echo "それでも最低限使っていけるようにはなっていますが各々カスタマイズして使いやすいようにしてください。"
-echo "megaの同じフォルダに入っていた"
-echo ".zshrc と .myfunctions をこのスクリプトと同じ場所に入れてこのスクリプトを実行してください。"
 echo "あ、vimもインストールするので拒否反応が出る方は後でアンインストールしておいてください。"
 echo "途中何回かパスワードを求められると思いますが、全てUbuntuをインストールしたときに決めたものを入力すればOKです。"
 read -e -p "よろしければなにかキーを押してください。"
@@ -28,3 +28,24 @@ sudo update-locale LANG="ja_JP.UTF-8"
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
 yes | ~/.fzf/install 
 echo "このウィンドウを閉じてもう一度WSLを起動したときZshになっていればOKです。"
+}
+
+setup_msys(){
+LANG="ja_JP.UTF-8"
+echo "これは簡易的な環境構築スクリプトです。"
+echo "Msysをインストールしてこれから環境を0から作らなければいけない方向けのスクリプトです。"
+echo "これを実行するとログインShellはZshになります。"
+echo "oh-my-zshやPreztoみたいなものは導入しません。"
+echo "それでも最低限使っていけるようにはなっていますが各々カスタマイズして使いやすいようにしてください。"
+echo "あ、vimもインストールするので拒否反応が出る方は後でアンインストールしておいてください。"
+read -e -p "よろしければなにかキーを押してください。"
+if [[ ! -e zshrc && ! -e myfunctions ]]; then echo "zshrc と myfunctionsがこのスクリプトと同じ階層にありません。";echo "自分でちゃんと.zshrcくらい作ってる！って方はこのスクリプトの9行目をコメントアウトか削除してください。";exit 1;fi
+BASE_POINT="${PWD}"
+mv zshrc ~/.zshrc
+mv myfunctions ~/.myfunctions
+cd ~
+
+}
+
+if [[ "${DISTRIBUTION}" == *buntu ]]; then setup_ubuntu;fi
+if [[ "${DISTRIBUTION}" == MSYS2* ]]; then setup_msys;fi
