@@ -11,9 +11,9 @@ WslをインストールするとHyper-VがオンになってしまってAndroid
 7. 導入スクリプトでumamusumeフォルダのシンボリックリンクがホームにできていると思うので
 cd umamusume
 と入力してumamusumeフォルダに入る。
-8. git clone --depth 1 https://github.com/incompetence33/uma_sh.git
+8. git clone --depth 1 https://github.com/incompetence33/uma_sh.git script_uma
 と入力する。
-ln -s uma_sh/uma.sh
+ln -s script_uma/uma.sh 
 と入力する。
 これで導入は終了です。
 なぜバッチファイルから起動するかというと、mingw64.exeやucrt64.exeから起動するとfzfというコマンドが使えないためです。
