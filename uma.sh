@@ -4,7 +4,24 @@ DIST_FLAG=0
 BASE_POINT="${PWD}"
 #cdしたあと絶対パスでもとに戻れるようにします。
 DISTRIBUTION="$(cat /etc/os-release | grep "^NAME=" |awk -F '=' '{gsub(/"/,"",$2);printf $2"\n"}')"
-if [[ ! "${DISTRIBUTION}" == *buntu ]]; then echo "どうやらUbuntuで実行されていないようです。";echo "エラーがでたら自分で何とかしてくれると助かります。";DIST_FLAG=1;sleep 1;fi
+if [[ "${DISTRIBUTION}" == *buntu ]]; then
+	echo "環境:${DISTRIBUTION}"
+elif [[ "${DISTRIBUTION}" == MSYS2 ]]; then
+	echo "環境:${DISTRIBUTION}"
+	if [[ "${CUSTOM_MSYS}" == 1 ]]; then
+		echo "MSYS2で実行されているようなので多分実行できると思います。"
+		DIST_FLAG=1
+	else
+		echo "MSYS2で実行されているようですが、配布したバッチファイルから起動されていないようです。"
+		echo "普通にMSYS2を起動するとfzfが使えないのでバッチファイルから起動してやり直して下さい。"
+		exit 1
+	fi
+else
+	echo "環境:${DISTRIBUTION}"
+	echo "想定していない環境です。"
+	echo "vgmstreamなどの必要なコマンドは手動でインストールして下さい。"
+	DIST_FLAG=2
+fi
 if [[ ! $(basename "${PWD}") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
 if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
 export PATH="${HOME}/tmp_com/bin:${HOME}/commands/bin:${PATH}"
@@ -54,7 +71,7 @@ install_vgmstream(){
 }
 COMMENTOUT
 ###
-if [[ ${DIST_FLAG} == 0 ]]; then
+if [[ "${DIST_FLAG}" == 0 ]]; then
 	install_vgmstream(){
 		##インストールばしょを「~/commands/bin」にすることにしました。
 		##いらんかったら消してくれって意味でいままで「~/tmp_com」って名前にしてたんだけどよくわからんしな。
@@ -80,7 +97,7 @@ if [[ ${DIST_FLAG} == 0 ]]; then
 		sudo apt upgrade -y &&\
 		sudo apt install sqlite3 perl git -y
 	}
-else
+elif [[ "${DIST_FLAG}" == 1 ]]; then
 	install_vgmstream(){
 		echo "~/commands/binにvgmstreamをビルドしてインストールします。"
 		FLAG=1
@@ -91,7 +108,6 @@ else
 		echo $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip')
 		wget -P ~/tmp_vg_install $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip') 
 		unzip ~/tmp_vg_install/vgmstream-win.zip -d ~/tmp_vg_install
-		read
 		mv ~/tmp_vg_install/test.exe ~/tmp_vg_install/vgmstream-cli.exe
 		mv ~/tmp_vg_install/*.dll ~/tmp_vg_install/*.exe ~/commands/bin
 		rm -rf ~/tmp_vg_install
@@ -104,6 +120,17 @@ else
 		pacman -Syy
 		pacman -S mingw-w64-ucrt-x86_64-sqlite3 git
 		pacman -Su
+	}
+else
+	install_vgmstream(){
+		echo "vgmstream-cliコマンドがないようなのでインストールしてください。"
+		echo "バイナリの名前が「vgmstream-cli」でないとインストールされてないことになってしまうので違う名前の場合はシンボリックリンクを貼るかリネームして下さい。"
+		FLAG=1
+	}
+	install_sqlite(){
+		echo "sqlite3コマンドがないようなのでインストールしてください。"
+		echo "バイナリの名前が「sqlite3」でないとインストールされてないことになってしまうので違う名前の場合はシンボリックリンクを貼るかリネームして下さい。"
+		FLAG=1
 	}
 fi
 install_fzf(){
@@ -124,10 +151,12 @@ else
 	echo "vgmstream-cliコマンドがないようです。"
 	install_vgmstream
 fi
+	
+
 if [[ ! $(type fzf) ]];then echo "fzfコマンドがないようです。";install_fzf;fi
 if [[ ! $(type sqlite3) ]];then echo "sqlite3コマンドがないようです。";install_sqlite;fi
 
-if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップ行程が終了しました。";echo "もう一度スクリプトを実行し直してください。";exit 0;fi
+if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップが済んでいましたら、もう一度スクリプトを実行し直してください。";exit 0;fi
 #ここまで環境の確認と足りないもののインストール。
 
 ###############
