@@ -444,11 +444,12 @@ masterfile(){
 manifestfiles(){
 	kyoukaisen "="
 	echo "マニフェストファイル"
+	mkdir -p "${PREFIX}"/manifests
 	TARGET="manifest manifest2 manifest3"
 	make_list
 	#目的ファイル名に「/」が入っているので除去します。
 	cat list.txt | sed -e "s/\/\///g" > tmp_.txt;rm list.txt;mv tmp_.txt list.txt
-	copy_files 'dat/%s/%s' '/%s' 'substr($1,0,2),$1,$2'
+	copy_files 'dat/%s/%s' '/manifests/%s' 'substr($1,0,2),$1,$2'
 	kyoukaisen "="
 }
 
@@ -489,7 +490,7 @@ case "${TO_DO}" in
 		LIVE_ONLY=1
 		awbtowav;;
 	"音声だけ")
-		awbtowav;;
+		manifestfiles;;
 	"アセットをまとめるだけ")
 		TARGET="${ASSET_TYPE}"
 		SORT_MODE="単一のディレクトリに入れる"
@@ -512,8 +513,7 @@ case "${TO_DO}" in
 		asset_rename
 		awbtowav
 		moviefiles
-		manifestfiles
-		fontfiles;;
+		manifestfiles;;
 	"キャラのIDを表示")
 		cat ${PREFIX}/masterfile/master.txt | grep 'text_data VALUES(6,' | awk -F "[,\']" '{printf "%s %s\n" ,$3,$5}' 2>/dev/null;;
 	*)
