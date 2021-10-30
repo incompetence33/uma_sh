@@ -490,7 +490,7 @@ case "${TO_DO}" in
 		LIVE_ONLY=1
 		awbtowav;;
 	"音声だけ")
-		manifestfiles;;
+		awbtowav;;
 	"アセットをまとめるだけ")
 		TARGET="${ASSET_TYPE}"
 		SORT_MODE="単一のディレクトリに入れる"
