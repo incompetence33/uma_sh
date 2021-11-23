@@ -165,7 +165,7 @@ if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップが済んでいま�
 PREFIX="解析"
 COPYFLAG=0
 PARALLEL=1
-
+if [[ -n "${TERM}" ]]; then SCREEN_WIDTH=$(tput cols); else SCREEN_WIDTH=20;fi
 
 ASSET_TYPE="_3d_cutt announce atlas bg chara gacha gachaselect guide home imageeffect item lipsync live loginbonus minigame mob outgame paddock race single story storyevent supportcard transferevent uianimation"
 #アセットの種類を選択するときに使います。
@@ -333,7 +333,7 @@ kyoukaisen(){
 meta_analyze(){
 	#metaを展開します。
 	rm -f output_meta_tmp.txt
-	echo -ne ".output output_meta_tmp.txt \n.dump" | sqlite3 meta
+	echo -ne ".output output_meta_tmp.txt \n.dump a" | sqlite3 meta
 	#なんかインデントするとエラーが出てしまうのでechoの拡張で対応した。
 	if [[ ${COPYFLAG} == 0 ]]; then 
 		if [[ -f output_meta.txt ]]; then 
@@ -397,17 +397,17 @@ awbtowav(){
 		if [[ ! $(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)"* 2> /dev/null | wc -l) == ${MAXTRACK} ]]; then
 			#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
 			#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
-			for TRACK in $(seq -w 0001 ${MAXTRACK});do
-				${VGMSTREAM} -s ${TRACK} -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
-				echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})\c"
+			for TRACK in $(seq -w 0000 ${MAXTRACK});do
+				echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE}) File:$(basename "${FILE}")\c"
 				echo -ne "\r\c"
+				${VGMSTREAM} -s ${TRACK} -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
 				((COUNT_TRACK++))
 			done
-			echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})\c"
-			echo -ne "\r\c"
 		else
 			((SKIIPED_FILE++))
 		fi
+		printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
+		echo -ne "\r\c"
 		echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})\c"
 		echo -ne "\r\c"
 		((COUNT++))
