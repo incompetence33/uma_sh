@@ -391,10 +391,10 @@ awbtowav(){
 	
 	SKIIPED_FILE=0
 	for FILE in $(if [[ ${LIVE_ONLY} == 1 ]]; then find sound/l/ -type f -name "*.awb" ;else find sound/ -type f -name "*.awb";fi);do
-		MAXTRACK=$(hexdump -s 8 -n 2 -v -e '/1 "%02X "' ${FILE} | awk -F ' ' '{printf "ibase=16; %s%s\n",$2,$1}' | bc)
+		MAXTRACK=$(($(hexdump -s 8 -n 2 -v -e '/1 "%02X "' ${FILE} | awk -F ' ' '{printf "ibase=16; %s%s\n",$2,$1}' | bc)-1))
 		#hexdumpで8バイト目から2バイト分を取得してそれを16進から10進にする。
 		#その部分はそのawbに何トラック入っているかを表しているため。
-		if [[ ! $(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)"* 2> /dev/null | wc -l) == ${MAXTRACK} ]]; then
+		if [[ ! $(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_"* 2> /dev/null | wc -l) == $((${MAXTRACK}+1)) ]]; then
 			#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
 			#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
 			for TRACK in $(seq -w 0000 ${MAXTRACK});do
@@ -403,11 +403,11 @@ awbtowav(){
 				${VGMSTREAM} -s ${TRACK} -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
 				((COUNT_TRACK++))
 			done
+			printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
+			echo -ne "\r\c"
 		else
 			((SKIIPED_FILE++))
 		fi
-		printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
-		echo -ne "\r\c"
 		echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})\c"
 		echo -ne "\r\c"
 		((COUNT++))

@@ -8,7 +8,8 @@ cp pacman.conf /etc/pacman.conf
 cp .zshrc ~/.zshrc
 cp .myfunctions ~/.myfunctions
 cp .minttyrc ~/.minttyrc
-echo 'exec zsh -l' >> ~/.bashrc
+echo "MSYS=winsymlinks:nativestrict" >> ~/.bashrc
+echo 'exec winpty zsh -l' >> ~/.bashrc
 pacman -Syy
 cd ~
 while true;do
