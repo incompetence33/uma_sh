@@ -8,13 +8,7 @@ if [[ "${DISTRIBUTION}" == *buntu ]]; then
 	echo "環境:${DISTRIBUTION}"
 elif [[ "${DISTRIBUTION}" == MSYS2 ]]; then
 	echo "環境:${DISTRIBUTION}"
-	if [[ "${CUSTOM_MSYS}" == 1 ]]; then
-		echo "MSYS2で実行されているようなので多分実行できると思います。"
-		DIST_FLAG=1
-	else
-		echo "MSYS2で実行されているようですが、配布したバッチファイルから起動されていないようです。"
-		echo "普通にMSYS2を起動するとfzfが使えないのでバッチファイルから起動してやり直して下さい。"
-		exit 1
+	echo "MSYS2で実行されているようですが、winptyから起動されてない場合はfzfが動かないのでうまく動かなかった場合winptyから起動されてないもんだと思ってください。"
 	fi
 else
 	echo "環境:${DISTRIBUTION}"
