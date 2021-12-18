@@ -9,7 +9,6 @@ if [[ "${DISTRIBUTION}" == *buntu ]]; then
 elif [[ "${DISTRIBUTION}" == MSYS2 ]]; then
 	echo "環境:${DISTRIBUTION}"
 	echo "MSYS2で実行されているようですが、winptyから起動されてない場合はfzfが動かないのでうまく動かなかった場合winptyから起動されてないもんだと思ってください。"
-	fi
 else
 	echo "環境:${DISTRIBUTION}"
 	echo "想定していない環境です。"
