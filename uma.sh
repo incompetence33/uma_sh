@@ -394,7 +394,7 @@ awbtowav(){
 			for TRACK in $(seq -w 0000 ${MAXTRACK});do
 				echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE}) File:$(basename "${FILE}")\c"
 				echo -ne "\r\c"
-				${VGMSTREAM} -s $((${TRACK}+1)) -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
+				${VGMSTREAM} -s $((10#${TRACK}+1)) -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
 				((COUNT_TRACK++))
 			done
 			printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
