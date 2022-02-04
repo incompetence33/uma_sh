@@ -1,6 +1,6 @@
 LANG="ja_JP.UTF-8"
-source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/zsh-completions/zsh-completions.plugin.zsh
+source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.zsh-completions/zsh-completions.plugin.zsh
 # あるマシンには存在するが別のマシンには存在しないかもしれないパスを PATH に追加したいならば、
 # パスの後ろに (N-/) をつけるとよい
 # こうすると、パスの場所にディレクトリが存在しない場合、パスが空文字列に置換されるぞ。
@@ -10,6 +10,7 @@ path=(
     ~/.local/bin(N-/)
     /home/linuxbrew/.linuxbrew/bin(N-/)
     ~/.cargo/bin(N-/)
+	~/commands(N-/)
     $path
 )
 #

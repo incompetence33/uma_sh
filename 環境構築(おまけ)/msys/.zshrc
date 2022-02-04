@@ -4,8 +4,8 @@
 
 
 LANG="ja_JP.UTF-8"
-source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/zsh-completions/zsh-completions.plugin.zsh
+source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.zsh-completions/zsh-completions.plugin.zsh
 # あるマシンには存在するが別のマシンには存在しないかもしれないパスを PATH に追加したいならば、
 # パスの後ろに (N-/) をつけるとよい
 path=(

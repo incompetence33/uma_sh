@@ -1,6 +1,6 @@
 alias apt="sudo apt"
-alias apu="apt update"
-alias apug="apt -y full-upgrade"
+alias apu="sudo apt update"
+alias apug="sudo apt -y full-upgrade"
 yokosen(){
     if [ -n "${TERM}" ];
       then SCREEN_WIDTH=$(tput cols);

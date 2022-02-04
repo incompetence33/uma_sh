@@ -22,30 +22,12 @@ echo "デフォルトのShellをBashからZshにします。"
 echo "パスワードを入力してください。"
 sudo sed '$a /bin/zsh' /etc/shells
 chsh -s /bin/zsh
-git clone git://github.com/zsh-users/zsh-completions.git
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+git clone git://github.com/zsh-users/zsh-completions.git ~/.zsh-completions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh-syntax-highlighting
 sudo update-locale LANG="ja_JP.UTF-8"
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
 yes | ~/.fzf/install 
 echo "このウィンドウを閉じてもう一度WSLを起動したときZshになっていればOKです。"
 }
 
-setup_msys(){
-LANG="ja_JP.UTF-8"
-echo "これは簡易的な環境構築スクリプトです。"
-echo "Msysをインストールしてこれから環境を0から作らなければいけない方向けのスクリプトです。"
-echo "これを実行するとログインShellはZshになります。"
-echo "oh-my-zshやPreztoみたいなものは導入しません。"
-echo "それでも最低限使っていけるようにはなっていますが各々カスタマイズして使いやすいようにしてください。"
-echo "あ、vimもインストールするので拒否反応が出る方は後でアンインストールしておいてください。"
-read -e -p "よろしければなにかキーを押してください。"
-if [[ ! -e zshrc && ! -e myfunctions ]]; then echo "zshrc と myfunctionsがこのスクリプトと同じ階層にありません。";echo "自分でちゃんと.zshrcくらい作ってる！って方はこのスクリプトの9行目をコメントアウトか削除してください。";exit 1;fi
-BASE_POINT="${PWD}"
-mv zshrc ~/.zshrc
-mv myfunctions ~/.myfunctions
-cd ~
-
-}
-
-if [[ "${DISTRIBUTION}" == *buntu ]]; then setup_ubuntu;fi
-if [[ "${DISTRIBUTION}" == MSYS2* ]]; then setup_msys;fi
+if [[ "${DISTRIBUTION}" == *buntu ]]; then setup_ubuntu;else echo "WSLのUbuntu用のSetUpスクリプトなのでUbuntuで実行してください。";fi

@@ -15,8 +15,8 @@ cd ~
 while true;do
   yes ' ' | pacman -S bc bison diffutils flex git openssh rsync tar unrar unzip zsh mingw-w64-ucrt-x86_64-aria2 mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-icu mingw-w64-ucrt-x86_64-libzip mingw-w64-ucrt-x86_64-perl mingw-w64-ucrt-x86_64-sqlite3 winpty && break
 done
-git clone git://github.com/zsh-users/zsh-completions.git
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+git clone git://github.com/zsh-users/zsh-completions.git ~/.zsh-completions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh-syntax-highlighting
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 yes | ~/.fzf/install
 ln -s /ucrt64/bin/mingw32-make.exe /ucrt64/bin/make.exe
