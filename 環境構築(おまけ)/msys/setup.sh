@@ -13,7 +13,7 @@ echo 'exec winpty zsh -l' >> ~/.bashrc
 pacman -Syy
 cd ~
 while true;do
-  yes ' ' | pacman -S bc bison diffutils flex git openssh rsync tar unrar unzip zsh mingw-w64-ucrt-x86_64-aria2 mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-icu mingw-w64-ucrt-x86_64-libzip mingw-w64-ucrt-x86_64-perl mingw-w64-ucrt-x86_64-sqlite3 && break
+  yes ' ' | pacman -S bc bison diffutils flex git openssh rsync tar unrar unzip winpty zsh mingw-w64-ucrt-x86_64-aria2 mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-icu mingw-w64-ucrt-x86_64-libzip mingw-w64-ucrt-x86_64-perl mingw-w64-ucrt-x86_64-sqlite3 && break
 done
 git clone git://github.com/zsh-users/zsh-completions.git
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
