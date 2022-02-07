@@ -33,7 +33,7 @@ yes_or_no(){
 	esac
 }
 
-###vgmstreamのインストールは不安定なので公式からバイナリをダウンロードすることにしました。
+###vgmstreamをビルドしてインストールするは不安定なので公式からバイナリをダウンロードすることにしました。
 ###一応古いソースから自分でビルドしたい人向けに残しておきます。
 <<COMMENTOUT
 install_vgmstream(){
@@ -99,7 +99,6 @@ elif [[ "${DIST_FLAG}" == 1 ]]; then
 		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
 		mkdir -p ~/commands/bin
 		mkdir -p ~/tmp_vg_install
-		echo $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip')
 		wget -P ~/tmp_vg_install $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip') 
 		unzip ~/tmp_vg_install/vgmstream-win.zip -d ~/tmp_vg_install
 		mv ~/tmp_vg_install/test.exe ~/tmp_vg_install/vgmstream-cli.exe
@@ -159,22 +158,24 @@ if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップが済んでいま�
 PREFIX="解析"
 COPYFLAG=0
 PARALLEL=1
+PARALLEL_SOUND=1
+COUNTFILE_A=/tmp/COUNT_A;COUNTFILE_B=/tmp/COUNT_B;COUNTFILE_C=/tmp/COUNT_C
 if [[ -n "${TERM}" ]]; then SCREEN_WIDTH=$(tput cols); else SCREEN_WIDTH=20;fi
 
 ASSET_TYPE="_3d_cutt announce atlas bg chara gacha gachaselect guide home imageeffect item lipsync live loginbonus minigame mob outgame paddock race single story storyevent supportcard transferevent uianimation"
 #アセットの種類を選択するときに使います。
 
-while getopts "cfj:prUh" OPT;do
+while getopts "cfj:prs:Uh" OPT;do
 	case $OPT in
 		"c" ) COPYFLAG=1;;
 		"f" ) COPYFLAG=2;;
 		"j" ) PARALLEL=${OPTARG}
 			if [[ "$PARALLEL" =~ ^[0-9]+$ ]]; then
-				if [[ ${PARALLEL} -le 20 && ${PARALLEL} -ge 1 ]]; then
+				if [[ ${PARALLEL} -le 30 && ${PARALLEL} -ge 1 ]]; then
 					echo "コピーの並列処理数を${PARALLEL}に設定しました。"
 				else
 					PARALLEL=1
-					echo "並列処理数は20以下1以上で入力してください。"
+					echo "並列処理数は30以下1以上で入力してください。"
 					echo "よって1に再設定されました。"
 					read -e -n1 -p "わかりましたら何かキーを押してください。"
 				fi
@@ -190,9 +191,27 @@ while getopts "cfj:prUh" OPT;do
 			#空白や何も入力されてないとルートに書き込もうとする可能性があるので回避しておきます。
 			#スペースもエラーの元なのでスペースが入っている場合もデフォルトに戻します。
 			;;
+		"s" )
+			PARALLEL_SOUND_TMP="${OPTARG}"
+			if [[ "$PARALLEL" =~ ^[0-9]+$ ]]; then
+				if [[ ${PARALLEL_SOUND_TMP} -le 20 && ${PARALLEL_SOUND_TMP} -ge 1 ]]; then
+					echo "音声変換の並列処理数を${PARALLEL_SOUND_TMP}に設定しました。"
+				else
+					echo "並列処理数は20以下1以上で入力してください。"
+					echo "よって1ファイルコピーの並行処理数の1/2(切り捨て)になるように設定します。"
+					read -e -n1 -p "わかりましたら何かキーを押してください。"
+				fi
+			else
+				echo "数値を入力してください。"
+				echo "よって1に再設定されました。"
+				read -e -n1 -p "わかりましたら何かキーを押してください。"
+			fi;;
 		"U" ) if [[ ! -d script_uma ]]; then git clone --depth 1 https://github.com/incompetence33/uma_sh.git script_uma;fi
 			cd script_uma && git pull && cd "${BASE_POINT}"
 			if [[ ! -L uma.sh ]]; then rm -f uma.sh;ln -s script_uma/uma.sh;fi
+			echo "アップデート完了。"
+			./uma.sh -h
+			echo "新機能がある可能性がるので一応ヘルプを表示します。"
 			exit 0
 			;;
 		* )
@@ -203,28 +222,32 @@ while getopts "cfj:prUh" OPT;do
 			echo "-j :"
 			echo "	./uma.sh -j2"
 			echo "	./uma.sh -j 2"
-			echo "	このようにすることでコピーするときの並列処理数を20以下1以上の整数で設定できます。"
+			echo "	このようにすることでコピーするときの並列処理数を30以下1以上の整数で設定できます。"
 			echo "	あんまり数を増やすとパソコンが壊れないか心配なので上限を設けました。"
 			echo "	20を超える数や数値以外が入力された場合1に設定し直されます。"
-			echo "	いまのところコピーされた数などが正常に表示できないことを、ご了承ください。"
 			echo "-p :"
 			echo "	出力先のフォルダ名を変更できます(非推奨)。"
 			echo "	ただしスペースを名前に含めることはできません。"
+			echo "-s :"
+			echo " 	音声を変換するときの並行処理数を20以下1以上の整数で設定できます。"
+			echo "	Core i9 10850k搭載のPCでもCPU使用率が100%になりメモリも結構食ったので上限を設けました"
+			echo "	なにも設定していない場合音声の並行処理数はファイルコピーの並行処理数の1/2(切り捨て)になるように設定します。"
+			echo "	20を超える数や数値以外が入力された場合もファイルコピーの並行処理数の1/2(切り捨て)になるように設定し直されます。"
 			echo "-U :"
 			echo "	スクリプトをアップデートします。"
 			echo "	このオプションを初めて実行する場合ならumamusumeフォルダーにgit cloneされます。"
 			echo "	そうでない場合はgit pullするだけです。"
-			echo "	シンボリックリンクを作成するのですでにumamusumeフォルダーにuma.shというファイルがある場合削除しておいて下さい。"
 			echo "-h :"
 			echo "	ヘルプを表示します。" 
 			exit 0;
 	esac
 done
-
+if [ -n ${PARALLEL_SOUND_TMP} ]; then PARALLEL_SOUND=${PARALLEL_SOUND_TMP};elif [[ ${PARALLEL} > 1 ]]; then PARALLEL_SOUND=$((${PARALLEL}/2));fi
 case ${COPYFLAG} in
 	"0" )
 		#通常。
 		dircp (){
+			if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -234,23 +257,24 @@ case ${COPYFLAG} in
 			#コピー元の存在チェック。
 			if [[ ! -e "${1}" ]]; then
 				echo "ファイルがありません: ${1} (${2})"
-				((NOT_FOUND++))
-				return 2
-			fi
-			#既にコピー先があったらスキップ。
-			if [[ -e "${2}" ]]; then
+				copy_stat=2
+			elif [[ -e "${2}" ]]; then
 				echo "スキップ: ${2}"
-				((SKIIPED_FILE++))
-				return 1
+				copy_stat=1
 			else
 				cp -r "${1}" "${2}"
-				((COPYED_FILE++))
-				return 0
+				copy_stat=0
 			fi
+			case ${copy_stat} in
+				"0") count COUNTFILE_A COPYED_FILE;;
+				"1") count COUNTFILE_B SKIIPED_FILE;;
+				"2") count COUNTFILE_C NOT_FOUND;
+			esac 
 		};;
 	"1" )
 		#サイズでコピーするかを判断する。
 		dircp (){
+			if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -260,24 +284,25 @@ case ${COPYFLAG} in
 			# コピー元の存在チェック
 			if [[ ! -e "${1}" ]]; then
 				#echo "ファイルがありません: ${1} (${2})"
-				((NOT_FOUND++))
-				return 2
-			fi
-			# コピー先とサイズが同じならスキップ。
-			if [[ $(wc -c < ${1}) == $(wc -c < ${2}) ]]; then
+				copy_stat=2
+			elif [[ $(wc -c < ${1}) == $(wc -c < ${2}) ]]; then
 				#echo "スキップ: ${2}"
-				((SKIIPED_FILE++))
-				return 1
+				copy_stat=1
 			else
 				echo "${1} → ${2}"
 				cp -r "${1}" "${2}"
-				((COPYED_FILE++))
-				return 0
+				copy_stat=0
 			fi
+			case ${copy_stat} in
+				"0") count COUNTFILE_A COPYED_FILE;;
+				"1") count COUNTFILE_B SKIIPED_FILE;;
+				"2") count COUNTFILE_C NOT_FOUND;
+			esac
 		};;
 	"2" )
 		#全てコピーする。
 		dircp (){
+			if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -285,25 +310,32 @@ case ${COPYFLAG} in
 				fi
 			fi
 				cp -r "${1}" "${2}" > /dev/null 2>&1
-				((COPYED_FILE++))
+				count COUNTFILE_A COPYED_FILE
 		};;
 	* )
 		echo "異常なフラグです。終了します。"
 		exit 1;
 esac
 #dirpdf内で分岐してもよかったけど毎回ifやcaseすると時間がかかるかな？と思ってこのような形にしました。
-
-copy_files (){
-	MAX="$(cat list.txt | wc -l)"
+count_reset(){
+	RESET_VAL=0
+	if [[ ${1} =~ ^-?[0-9]+\.?[0-9]*$ ]]; then RESET_VAL="${1}";fi
+	echo "${RESET_VAL}" | tee ${COUNTFILE_A} ${COUNTFILE_B} ${COUNTFILE_C} > /dev/null
+	sleep 1
+}
+count(){
+	flock ${!1} bash -c 'COUNT=`cat '${!1}'`;echo $((COUNT+1)) > '${!1}
+	eval ${2}=`cat ${!1}`
+}
+copy_files(){
+	MAX="$(wc -l <list.txt )"
 	PROGRESS=1
-	SKIIPED_FILE=0
-	COPYED_FILE=0
-	NOT_FOUND=0
+	count_reset
 	echo "目的のファイルをコピーしています……"
 	echo -ne "進度: (${PROGRESS}/${MAX} (コピーされた数: ${COPYED_FILE} スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))\c"
 	echo -ne "\r\c"
 	while [[ ${MAX} -ge ${PROGRESS} ]]; do
-		for C_JOB in $(seq 2 $((PARALLEL)));do
+		for C_JOB in $(seq 2 ${PARALLEL});do
 			dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}+${C_JOB}-1'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'') &\
 		done
 		dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'')
@@ -312,8 +344,9 @@ copy_files (){
 		echo -ne "\r\c"
 		((PROGRESS +=${PARALLEL}))
 	done
-	echo "進度: ($((PROGRESS-1))/${MAX} (コピーされた数: ${COPYED_FILE} スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))"
-	#処理数が実際より1多くなってしまうのでここで減らしています()
+	sleep 4
+	echo "進度: ($((PROGRESS-1))/${MAX} (コピーされた数: $(cat ${COUNTFILE_A}) スキップ数: $(cat ${COUNTFILE_B}) 存在なし: $(cat ${COUNTFILE_C})))"
+	#処理数が合いませんが仕方ないので諦めてください。
 }
 
 kyoukaisen(){
@@ -353,6 +386,27 @@ make_list(){
 	#初期化して事故を防ぎます。
 }
 
+vgm_processing(){
+	if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
+	FILE="$(awk 'NR=='${PROGRESS}+${C_JOB}-1'{print $0}' < sound_list.txt)"
+	MAXTRACK=$(($(hexdump -s 8 -n 2 -v -e '/1 "%02X "' "${FILE}" | awk -F ' ' '{printf "ibase=16; %s%s\n",$2,$1}' | bc)-1))
+	#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
+	#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
+	if [[ ! $(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_"* 2> /dev/null | grep -E "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_[0-9]{4}.wav" | wc -l) == $((${MAXTRACK}+1)) ]]; then
+		for TRACK in $(seq -w 0000 ${MAXTRACK});do
+			${VGMSTREAM} -s $((10#${TRACK}+1)) -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
+			count COUNTFILE_C COUNT_TRACK
+		done
+		printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
+		echo -ne "\r\c"
+	else
+		count COUNTFILE_B SKIIPED_FILE
+	fi
+	echo -ne "処理数: ${PROCESSED_FILE} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})\c"
+	echo -ne "\r\c"
+	count COUNTFILE_A PROCESSED_FILE
+}
+
 awbtowav(){
 	kyoukaisen "="
 	echo "音声を変換します。"
@@ -378,35 +432,20 @@ awbtowav(){
 	kyoukaisen
 	echo "awbファイルをwavファイルに変換します。"
 	echo "wavファイルは sound_wav/ に出力されます。"
-	COUNT=0
-	COUNT_TRACK=0
-	echo -ne "処理数: ${COUNT} (トラック数:${COUNT_TRACK})\c"
-	echo -ne "\r\c"
-	
-	SKIIPED_FILE=0
-	for FILE in $(if [[ ${LIVE_ONLY} == 1 ]]; then find sound/l/ -type f -name "*.awb" ;else find sound/ -type f -name "*.awb";fi);do
-		MAXTRACK=$(($(hexdump -s 8 -n 2 -v -e '/1 "%02X "' ${FILE} | awk -F ' ' '{printf "ibase=16; %s%s\n",$2,$1}' | bc)-1))
-		#hexdumpで8バイト目から2バイト分を取得してそれを16進から10進にする。
-		#その部分はそのawbに何トラック入っているかを表しているため。
-		if [[ ! $(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_"* 2> /dev/null | wc -l) == $((${MAXTRACK}+1)) ]]; then
-			#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
-			#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
-			for TRACK in $(seq -w 0000 ${MAXTRACK});do
-				echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE}) File:$(basename "${FILE}")\c"
-				echo -ne "\r\c"
-				${VGMSTREAM} -s $((10#${TRACK}+1)) -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
-				((COUNT_TRACK++))
-			done
-			printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
-			echo -ne "\r\c"
-		else
-			((SKIIPED_FILE++))
-		fi
-		echo -ne "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})\c"
-		echo -ne "\r\c"
-		((COUNT++))
+	count_reset
+	PROGRESS=1
+	if [[ ${LIVE_ONLY} == 1 ]]; then find sound/l/ -type f -name "*.awb" > sound_list.txt;else find sound/ -type f -name "*.awb" > sound_list.txt;fi
+	MAX=$(wc -l <sound_list.txt)
+	while [[ ${MAX} -ge ${PROGRESS} ]];do
+		for C_JOB in $(seq 2 ${PARALLEL_SOUND});do
+			vgm_processing & \
+		done
+		C_JOB=1
+		vgm_processing
+		((PROGRESS +=${PARALLEL_SOUND}))
 	done
-	echo "処理数: ${COUNT} (トラック数: ${COUNT_TRACK} スキップ: ${SKIIPED_FILE})"
+	sleep 5
+	echo "処理数: $(cat ${COUNTFILE_A}) (トラック数: $(cat ${COUNTFILE_C}) スキップ: $(cat ${COUNTFILE_B}))"
 	echo "完了しました。"
 	cd "${BASE_POINT}"
 	#もとのディレクトリに戻ります。
