@@ -397,8 +397,6 @@ vgm_processing(){
 			${VGMSTREAM} -s $((10#${TRACK}+1)) -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
 			count COUNTFILE_C COUNT_TRACK
 		done
-		printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
-		echo -ne "\r\c"
 	else
 		count COUNTFILE_B SKIIPED_FILE
 	fi

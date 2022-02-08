@@ -25,7 +25,9 @@ ln -s /c /c_drive
 if [[ -d /c_drive/Users/$(whoami)/AppData/LocalLow/Cygames/umamusume/ ]]; then
 	ln -s /c_drive/Users/$(whoami)/AppData/LocalLow/Cygames/umamusume/
 fi
-
+cd ~/umamusume
+if [[ ! -d script_uma ]]; then git clone --depth 1 https://github.com/incompetence33/uma_sh.git script_uma;else cd script_uma && git pull && cd ~/umamusume;fi
+if [[ ! -L uma.sh ]]; then rm -f uma.sh;ln -s script_uma/uma.sh;fi
 while true;do
   pacman -Syyu && break
 done

@@ -8,13 +8,6 @@ WslをインストールするとHyper-VがオンになってしまってAndroid
 4. ucrt64.exeを起動する。ここまできちんとできたら次のコマンドを実行する。
 cd ./setup_msys2_env && ./setup.sh
 5. しばらく待つとなんか聞いてくるのでエンターを押す。するとウィンドウが閉じるのでまたucrt64.exeを起動する。
-6. 導入スクリプトでumamusumeフォルダのシンボリックリンクがホームにできていると思うので
-cd umamusume
-と入力してumamusumeフォルダに入る。
-7. git clone --depth 1 https://github.com/incompetence33/uma_sh.git script_uma
-と入力する。
-ln -s script_uma/uma.sh 
-と入力する。
-8. pacu と入力し環境をアップデートする。
+6. pacu と入力しenterを押し環境をアップデートする。
 これで導入は終了です。
 
