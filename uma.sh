@@ -1,5 +1,6 @@
 #!/bin/bash
 LANG="ja_JP.UTF-8"
+trap "echo;echo 'CTRL+C が入力されたので終了します';exit 1" SIGINT
 DIST_FLAG=0
 BASE_POINT="${PWD}"
 #cdしたあと絶対パスでもとに戻れるようにします。
@@ -68,7 +69,7 @@ COMMENTOUT
 if [[ "${DIST_FLAG}" == 0 ]]; then
 	install_vgmstream(){
 		##インストールばしょを「~/commands/bin」にすることにしました。
-		##いらんかったら消してくれって意味でいままで「~/tmp_com」って名前にしてたんだけどよくわからんしな。
+		##いらんかったら消してくれって意味で、いままでは「~/tmp_com」って名前にしてたんだけどよくわからんしな。
 		##ただ、どっちにあっても大丈夫なようにはしておくので、バイナリの配置場所をいまから変える必要はないです。
 		echo "~/commands/binにvgmstreamをビルドしてインストールします。"
 		FLAG=1
@@ -136,9 +137,9 @@ install_fzf(){
 	yes | ~/.fzf/install
 }
 
-if [[ $(type vgmstream-cli 2>/dev/null) ]];then 
+if ! type vgmstream-cli > /dev/null 2>&1; then 
 	VGMSTREAM="vgmstream-cli"
-elif [[ $(type vgmstream_cli 2>/dev/null) ]]; then
+elif ! type vgmstream_cli > /dev/null 2>&1; then
 	VGMSTREAM="vgmstream_cli"
 else
 	echo "vgmstream-cliコマンドがないようです。"
@@ -146,8 +147,8 @@ else
 fi
 	
 
-if [[ ! $(type fzf) ]];then echo "fzfコマンドがないようです。";install_fzf;fi
-if [[ ! $(type sqlite3) ]];then echo "sqlite3コマンドがないようです。";install_sqlite;fi
+if ! type fzf > /dev/null 2>&1; then echo "fzfコマンドがないようです。";install_fzf;fi
+if ! type sqlite3 > /dev/null 2>&1; then echo "sqlite3コマンドがないようです。";install_sqlite;fi
 
 if [[ ${FLAG} == 1 ]]; then echo "環境のセットアップが済んでいましたら、もう一度スクリプトを実行し直してください。";exit 0;fi
 #ここまで環境の確認と足りないもののインストール。
@@ -161,9 +162,6 @@ PARALLEL=1
 PARALLEL_SOUND=1
 COUNTFILE_A=/tmp/COUNT_A;COUNTFILE_B=/tmp/COUNT_B;COUNTFILE_C=/tmp/COUNT_C
 if [[ -n "${TERM}" ]]; then SCREEN_WIDTH=$(tput cols); else SCREEN_WIDTH=20;fi
-
-ASSET_TYPE="_3d_cutt announce atlas bg chara gacha gachaselect guide home imageeffect item lipsync live loginbonus minigame mob outgame paddock race single story storyevent supportcard transferevent uianimation"
-#アセットの種類を選択するときに使います。
 
 while getopts "cfj:prs:Uh" OPT;do
 	case $OPT in
@@ -186,14 +184,14 @@ while getopts "cfj:prs:Uh" OPT;do
 			fi
 			;;
 		"p" ) read -e -p "任意の出力先のフォルダー名を入力してください。:" PREFIX
-			if [[ ${PREFIX} == '' || ${PREFIX} == "* *" ]];then PREFIX="解析/";fi
+			if [[ ${PREFIX} == '' || ${PREFIX} == "* *" ]]; then PREFIX="解析/";fi
 			echo "出力先を${PREFIX}とします。"
 			#空白や何も入力されてないとルートに書き込もうとする可能性があるので回避しておきます。
 			#スペースもエラーの元なのでスペースが入っている場合もデフォルトに戻します。
 			;;
 		"s" )
 			PARALLEL_SOUND_TMP="${OPTARG}"
-			if [[ "$PARALLEL" =~ ^[0-9]+$ ]]; then
+			if [[ "${PARALLEL_SOUND_TMP}" =~ ^[0-9]+$ ]]; then
 				if [[ ${PARALLEL_SOUND_TMP} -le 20 && ${PARALLEL_SOUND_TMP} -ge 1 ]]; then
 					echo "音声変換の並列処理数を${PARALLEL_SOUND_TMP}に設定しました。"
 				else
@@ -334,7 +332,7 @@ copy_files(){
 	echo "目的のファイルをコピーしています……"
 	echo -ne "進度: (${PROGRESS}/${MAX} (コピーされた数: ${COPYED_FILE} スキップ数: ${SKIIPED_FILE} 存在なし: ${NOT_FOUND}))\c"
 	echo -ne "\r\c"
-	while [[ ${MAX} -ge ${PROGRESS} ]]; do
+	while [[ ${MAX} -ge ${PROGRESS} ]];do
 		for C_JOB in $(seq 2 ${PARALLEL});do
 			dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}+${C_JOB}-1'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'') &\
 		done
@@ -506,6 +504,8 @@ mkdir -p "${PREFIX}"
 TO_DO="$(echo "ライブだけ 音声だけ アセットをまとめるだけ 画像のアセットをリネームして配置 選んだ種類のアセットをリネームして配置 フォントだけ アセットの整理以外 全部 キャラのIDを表示" | tr ' ' '\n' | fzf --reverse --header="実行したいことを選んでください")"
 #何をするか決めます。
 meta_analyze
+ASSET_TYPE="$(cat output_meta.txt | grep \'manifest\' | awk -F \' '{printf "%s ",substr($2,3)}')"
+#アセットの種類を選択するときに使います。
 masterfile
 EXETIMEB="${SECONDS}"
 #実行時間を計測します(いらんかもしらんけど)。
