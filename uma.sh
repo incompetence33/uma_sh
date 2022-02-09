@@ -283,7 +283,7 @@ case ${COPYFLAG} in
 			if [[ ! -e "${1}" ]]; then
 				#echo "ファイルがありません: ${1} (${2})"
 				copy_stat=2
-			elif [[ $(wc -c < ${1}) == $(wc -c < ${2}) ]]; then
+			elif [[ $(wc -c < ${1} 2>/dev/null) == $(wc -c < ${2} 2>/dev/null) ]]; then
 				#echo "スキップ: ${2}"
 				copy_stat=1
 			else
