@@ -241,6 +241,7 @@ while getopts "cfj:prs:Uh" OPT;do
 	esac
 done
 if [ -n ${PARALLEL_SOUND_TMP} ]; then PARALLEL_SOUND=${PARALLEL_SOUND_TMP};elif [[ ${PARALLEL} > 1 ]]; then PARALLEL_SOUND=$((${PARALLEL}/2));fi
+set_dircp(){
 case ${COPYFLAG} in
 	"0" )
 		#通常。
@@ -315,6 +316,7 @@ case ${COPYFLAG} in
 		exit 1;
 esac
 #dirpdf内で分岐してもよかったけど毎回ifやcaseすると時間がかかるかな？と思ってこのような形にしました。
+}
 count_reset(){
 	RESET_VAL=0
 	if [[ ${1} =~ ^-?[0-9]+\.?[0-9]*$ ]]; then RESET_VAL="${1}";fi
@@ -368,6 +370,7 @@ meta_analyze(){
 			fi
 		fi
 	fi
+	set_dircp
 	mv output_meta_tmp.txt output_meta.txt
 	sleep 1
 }
