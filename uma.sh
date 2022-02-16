@@ -137,9 +137,9 @@ install_fzf(){
 	yes | ~/.fzf/install
 }
 
-if ! type vgmstream-cli > /dev/null 2>&1; then 
+if type vgmstream-cli > /dev/null 2>&1; then 
 	VGMSTREAM="vgmstream-cli"
-elif ! type vgmstream_cli > /dev/null 2>&1; then
+elif type vgmstream_cli > /dev/null 2>&1; then
 	VGMSTREAM="vgmstream_cli"
 else
 	echo "vgmstream-cliコマンドがないようです。"
@@ -284,7 +284,7 @@ case ${COPYFLAG} in
 			if [[ ! -e "${1}" ]]; then
 				#echo "ファイルがありません: ${1} (${2})"
 				copy_stat=2
-			elif [[ $(wc -c < "${1}" 1>/dev/null) == $(wc -c < "${2}" 1>/dev/null) ]]; then
+			elif [[ "$(wc -c < "${1}")" == "$(wc -c < "${2}")" ]]; then
 				#echo "スキップ: ${2}"
 				copy_stat=1
 			else
@@ -393,9 +393,9 @@ vgm_processing(){
 	MAXTRACK=$(($(hexdump -s 8 -n 2 -v -e '/1 "%02X "' "${FILE}" | awk -F ' ' '{printf "ibase=16; %s%s\n",$2,$1}' | bc)-1))
 	#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
 	#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
-	if [[ ! $(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_"* 2> /dev/null | grep -E "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_[0-9]{4}.wav" | wc -l) == $((${MAXTRACK}+1)) ]]; then
+	if [[ ! "$(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_"* 2> /dev/null | grep -E "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_[0-9]{4}.wav" | wc -l)" == "$((${MAXTRACK}+1))" ]]; then
 		for TRACK in $(seq -w 0000 ${MAXTRACK});do
-			${VGMSTREAM} -s $((10#${TRACK}+1)) -o $(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav ${FILE} > /dev/null 2>&1
+			${VGMSTREAM} -s $((10#${TRACK}+1)) -o "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav" ${FILE} > /dev/null 2>&1
 			count COUNTFILE_C COUNT_TRACK
 		done
 	else
