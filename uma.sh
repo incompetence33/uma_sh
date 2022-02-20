@@ -246,7 +246,7 @@ case ${COPYFLAG} in
 	"0" )
 		#通常。
 		dircp (){
-			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -ge ${MAX} ]]; then return 1;fi
+			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -gt ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -273,7 +273,7 @@ case ${COPYFLAG} in
 	"1" )
 		#サイズでコピーするかを判断する。
 		dircp (){
-			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -ge ${MAX} ]]; then return 1;fi
+			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -gt ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -301,7 +301,7 @@ case ${COPYFLAG} in
 	"2" )
 		#全てコピーする。
 		dircp (){
-			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -ge ${MAX} ]]; then return 1;fi
+			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -gt ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -336,7 +336,7 @@ copy_files(){
 	echo -ne "\r\c"
 	while [[ ${MAX} -ge ${PROGRESS} ]];do
 		for C_JOB in $(seq 2 ${PARALLEL});do
-			dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}+${C_JOB}-1'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'') &\
+			dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}+${C_JOB-"0"}-1'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'') &\
 		done
 		dircp $(cat list.txt | awk -F '[ ]' 'NR=='${PROGRESS}'{printf "'${1}' '"${PREFIX}"''${2}'\n" ,'${3}}'')
 		#${PROGRESS}行目から、要素1(ハッシュファイル名)、要素(元の名前と場所)を取得してコピーします。
