@@ -246,7 +246,7 @@ case ${COPYFLAG} in
 	"0" )
 		#通常。
 		dircp (){
-			if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
+			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -ge ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -273,7 +273,7 @@ case ${COPYFLAG} in
 	"1" )
 		#サイズでコピーするかを判断する。
 		dircp (){
-			if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
+			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -ge ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -301,7 +301,7 @@ case ${COPYFLAG} in
 	"2" )
 		#全てコピーする。
 		dircp (){
-			if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
+			if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -ge ${MAX} ]]; then return 1;fi
 			#cpするときに足りないディレクトリを勝手に作ってくれます。
 			if [[ "${2}" == */* ]]; then
 				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
@@ -388,8 +388,8 @@ make_list(){
 }
 
 vgm_processing(){
-	if [[ "$((${PROGRESS}+${C_JOB}))" -ge ${MAX} ]]; then return 1;fi
-	FILE="$(awk 'NR=='${PROGRESS}+${C_JOB}-1'{print $0}' < sound_list.txt)"
+	if [[ "$((${PROGRESS}+${C_JOB-"0"}))" -ge ${MAX} ]]; then return 1;fi
+	FILE="$(awk 'NR=='${PROGRESS}+${C_JOB-"0"}-1'{print $0}' < sound_list.txt)"
 	MAXTRACK=$(($(hexdump -s 8 -n 2 -v -e '/1 "%02X "' "${FILE}" | awk -F ' ' '{printf "ibase=16; %s%s\n",$2,$1}' | bc)-1))
 	#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
 	#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
