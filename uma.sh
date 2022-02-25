@@ -203,7 +203,8 @@ while getopts "cfj:prs:Uh" OPT;do
 				echo "数値を入力してください。"
 				echo "よって1に再設定されました。"
 				read -e -n1 -p "わかりましたら何かキーを押してください。"
-			fi;;
+			fi
+			;;
 		"U" ) if [[ ! -d script_uma ]]; then git clone --depth 1 https://github.com/incompetence33/uma_sh.git script_uma;fi
 			cd script_uma && git pull && cd "${BASE_POINT}"
 			if [[ ! -L uma.sh ]]; then rm -f uma.sh;ln -s script_uma/uma.sh;fi
@@ -240,7 +241,7 @@ while getopts "cfj:prs:Uh" OPT;do
 			exit 0;
 	esac
 done
-if [ -n ${PARALLEL_SOUND_TMP} ]; then PARALLEL_SOUND=${PARALLEL_SOUND_TMP};elif [[ ${PARALLEL} > 1 ]]; then PARALLEL_SOUND=$((${PARALLEL}/2));fi
+if [ ! -z ${PARALLEL_SOUND_TMP} ]; then PARALLEL_SOUND=${PARALLEL_SOUND_TMP};elif [[ ${PARALLEL} > 1 ]]; then PARALLEL_SOUND=$((${PARALLEL}/2));else PARALLEL_SOUND=0;fi
 set_dircp(){
 case ${COPYFLAG} in
 	"0" )
@@ -408,6 +409,7 @@ vgm_processing(){
 
 awbtowav(){
 	kyoukaisen "="
+	if [ -z $PARALLEL_SOUND ]; then PARALLEL_SOUND=0;fi
 	echo "音声を変換します。"
 	TARGET="sound"
 	#ターゲットを決めます。
@@ -435,13 +437,13 @@ awbtowav(){
 	PROGRESS=1
 	if [[ ${LIVE_ONLY} == 1 ]]; then find sound/l/ -type f -name "*.awb" > sound_list.txt;else find sound/ -type f -name "*.awb" > sound_list.txt;fi
 	MAX=$(wc -l <sound_list.txt)
-	while [[ ${MAX} -ge ${PROGRESS} ]];do
-		for C_JOB in $(seq 2 ${PARALLEL_SOUND});do
+	while [[ ${MAX} -ge ${PROGRESS} ]]; do
+		for C_JOB in $(seq 2 ${PARALLEL_SOUND}); do
 			vgm_processing & \
 		done
 		C_JOB=1
 		vgm_processing
-		((PROGRESS +=${PARALLEL_SOUND}))
+		PROGRESS=$((${PROGRESS}+${PARALLEL_SOUND-"1"}))
 	done
 	sleep 5
 	echo "処理数: $(cat ${COUNTFILE_A}) (トラック数: $(cat ${COUNTFILE_C}) スキップ: $(cat ${COUNTFILE_B}))"
@@ -504,7 +506,7 @@ kyoukaisen "@"
 read -e -n1 -p "よければ何かキーをを押してください。"
 mkdir -p "${PREFIX}"
 #一応先に出力先ディレクトリを作成しておきます。
-TO_DO="$(echo "ライブだけ 音声だけ アセットをまとめるだけ 画像のアセットをリネームして配置 選んだ種類のアセットをリネームして配置 フォントだけ アセットの整理以外 全部 キャラのIDを表示" | tr ' ' '\n' | fzf --reverse --header="実行したいことを選んでください")"
+TO_DO="$(echo "ライブだけ 音声だけ アセットをまとめるだけ 画像のアセットをリネームして配置 選んだ種類のアセットをリネームして配置 フォントだけ アセットの整理以外 全部 キャラのIDを表示" | tr ' ' '\n' | fzf --reverse --header="実行したいことを選んでください。$(if [[ ${PARALLEL} == 1 ]]; then echo "==処理が並列化されていませんが大丈夫ですか？==";fi)")"
 #何をするか決めます。
 meta_analyze
 ASSET_TYPE="$(cat output_meta.txt | grep \'manifest\' | awk -F \' '{printf "%s ",substr($2,3)}')"
