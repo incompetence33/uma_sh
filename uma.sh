@@ -520,7 +520,7 @@ case "${TO_DO}" in
 		moviefiles
 		manifestfiles
 		TARGET="font"
-		SORT_MODE="単一のディレクトリに入れる"
+		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename;;
 	"ライブだけ")
 		LIVE_ONLY=1
@@ -529,7 +529,7 @@ case "${TO_DO}" in
 		awbtowav;;
 	"アセットをまとめるだけ")
 		TARGET="${ASSET_TYPE}"
-		SORT_MODE="単一のディレクトリに入れる"
+		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename;;
 	"画像のアセットをリネームして配置")
 		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
@@ -545,7 +545,7 @@ case "${TO_DO}" in
 		asset_rename;;
 	"全部")
 		TARGET="${ASSET_TYPE} font"
-		SORT_MODE="単一のディレクトリに入れる"
+		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename
 		awbtowav
 		moviefiles
