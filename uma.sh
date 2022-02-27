@@ -256,7 +256,7 @@ case ${COPYFLAG} in
 			fi
 			#コピー元の存在チェック。
 			if [[ ! -e "${1}" ]]; then
-				echo "ファイルがありません: ${1} (${2})"
+				echo "ファイルがありません: ${1} (${2})" >> notfound.txt
 				copy_stat=2
 			elif [[ -e "${2}" ]]; then
 				echo "スキップ: ${2}"
@@ -520,7 +520,7 @@ case "${TO_DO}" in
 		moviefiles
 		manifestfiles
 		TARGET="font"
-		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
+		SORT_MODE="$(echo "ディレクトリも復元する 単一のディレクトリに入れる" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename;;
 	"ライブだけ")
 		LIVE_ONLY=1
@@ -529,23 +529,23 @@ case "${TO_DO}" in
 		awbtowav;;
 	"アセットをまとめるだけ")
 		TARGET="${ASSET_TYPE}"
-		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
+		SORT_MODE="$(echo "ディレクトリも復元する 単一のディレクトリに入れる" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename;;
 	"画像のアセットをリネームして配置")
-		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
+		SORT_MODE="$(echo "ディレクトリも復元する 単一のディレクトリに入れる" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		TARGET="chara bg supportcard"
 		asset_rename;;
 	"選んだ種類のアセットをリネームして配置")
 		TARGET="$(echo "${ASSET_TYPE}" | tr ' ' '\n' | fzf --reverse --header="アセットの種類を選択してください。")"
-		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
+		SORT_MODE="$(echo "ディレクトリも復元する 単一のディレクトリに入れる" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename;;
 	"フォントだけ")
 		TARGET="font"
 		SORT_MODE="単一のディレクトリに入れる"
 		asset_rename;;
 	"全部")
-		TARGET="${ASSET_TYPE} font"
-		SORT_MODE="$(echo "単一のディレクトリに入れる ディレクトリも復元する" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
+		TARGET="${ASSET_TYPE}"
+		SORT_MODE="$(echo "ディレクトリも復元する 単一のディレクトリに入れる" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename
 		awbtowav
 		moviefiles
