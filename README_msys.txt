@@ -6,7 +6,9 @@ WslをインストールするとHyper-VがオンになってしまってAndroid
 2. これをダウンロードして解凍しておく https://github.com/incompetence33/uma_sh/releases/download/ver.5.0/setup_msys2_env.zip
 3. msys2をインストールしたフォルダの中のhomeというフォルダの中に自分のユーザ名のフォルダができていると思うので解凍して出てきたフォルダをそこに移動させておく。
 4. ucrt64.exeを起動する。ここまできちんとできたら次のコマンドを実行する。
+```sh
 cd ./setup_msys2_env && ./setup.sh
+```
 5. しばらく待つとなんか聞いてくるのでエンターを押す。するとウィンドウが閉じるのでまたucrt64.exeを起動する。
 6. pacu と入力しenterを押し環境をアップデートする。
 これで導入は終了です。

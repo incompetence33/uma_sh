@@ -285,7 +285,7 @@ case ${COPYFLAG} in
 			if [[ ! -e "${1}" ]]; then
 				#echo "ファイルがありません: ${1} (${2})"
 				copy_stat=2
-			elif [[ "$(wc -c < "${1}")" == "$(wc -c < "${2}")" ]]; then
+			elif [[ "$(wc -c "${1}" 2>/dev/null | awk '{print $1}')" == "$(wc -c "${2}" 2>/dev/null | awk '{print $1}')" ]]; then
 				#echo "スキップ: ${2}"
 				copy_stat=1
 			else
@@ -346,6 +346,8 @@ copy_files(){
 		((PROGRESS +=${PARALLEL}))
 	done
 	sleep 4
+	printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
+	echo -ne "\r\c"
 	echo "進度: ($((PROGRESS-1))/${MAX} (コピーされた数: $(cat ${COUNTFILE_A}) スキップ数: $(cat ${COUNTFILE_B}) 存在なし: $(cat ${COUNTFILE_C})))"
 	#処理数が合いませんが仕方ないので諦めてください。
 }
@@ -446,6 +448,8 @@ awbtowav(){
 		PROGRESS=$((${PROGRESS}+${PARALLEL_SOUND-"1"}))
 	done
 	sleep 5
+	printf -v _hr "%*s" ${SCREEN_WIDTH} && echo -ne "${_hr// /${1-" "}}\c"
+	echo -ne "\r\c"
 	echo "処理数: $(cat ${COUNTFILE_A}) (トラック数: $(cat ${COUNTFILE_C}) スキップ: $(cat ${COUNTFILE_B}))"
 	echo "完了しました。"
 	cd "${BASE_POINT}"
