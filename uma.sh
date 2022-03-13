@@ -16,7 +16,7 @@ else
 	echo "vgmstreamなどの必要なコマンドは手動でインストールして下さい。"
 	DIST_FLAG=2
 fi
-if [[ ! $(basename "${PWD}") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
+if [[ ! $(basename "$(pwd -P)") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
 if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
 export PATH="${HOME}/tmp_com/bin:${HOME}/commands/bin:${PATH}"
 #このスクリプトでvgmstreamをインストールするとここにインストールされるのでPATHを通します。
@@ -68,7 +68,7 @@ COMMENTOUT
 ###
 if [[ "${DIST_FLAG}" == 0 ]]; then
 	install_vgmstream(){
-		##インストールばしょを「~/commands/bin」にすることにしました。
+		##インストール場所を「~/commands/bin」にすることにしました。
 		##いらんかったら消してくれって意味で、いままでは「~/tmp_com」って名前にしてたんだけどよくわからんしな。
 		##ただ、どっちにあっても大丈夫なようにはしておくので、バイナリの配置場所をいまから変える必要はないです。
 		echo "~/commands/binにvgmstreamをビルドしてインストールします。"
@@ -94,7 +94,7 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 	}
 elif [[ "${DIST_FLAG}" == 1 ]]; then
 	install_vgmstream(){
-		echo "~/commands/binにvgmstreamをビルドしてインストールします。"
+		echo "~/commands/binにvgmstreamをインストールします。"
 		FLAG=1
 		yes_or_no
 		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
@@ -474,7 +474,6 @@ masterfile(){
 	echo "masterファイル"
 	mkdir -p ${PREFIX}/masterfile
 	echo -ne '.output master.txt\n.dump' | sqlite3 master/master.mdb
-	#なんかインデントするとエラーが出てしまうのでechoの拡張で対応した。
 	mv master.txt ${PREFIX}/masterfile/
 	kyoukaisen "="
 }
