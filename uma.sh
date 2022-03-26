@@ -547,7 +547,7 @@ case "${TO_DO}" in
 		SORT_MODE="単一のディレクトリに入れる"
 		asset_rename;;
 	"全部")
-		TARGET="${ASSET_TYPE}"
+		TARGET="${ASSET_TYPE/sound}"
 		SORT_MODE="$(echo "ディレクトリも復元する 単一のディレクトリに入れる" | tr ' ' '\n' | fzf --reverse --header="モードを選択してください。")"
 		asset_rename
 		awbtowav
