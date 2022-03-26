@@ -61,8 +61,9 @@ while getopts "rh" OPT;do
 		echo "-r:"
 		echo "	master.mdbを修復します。"
 		echo "-h:"
-		echo "	この文章を表示します。";
+		echo "	この文章を表示します。"
+		exit 0;
 	esac
 done
 db_rewriting
-rm -f character_id_list.txt dress_id_list.txt tmp_.db output_db_.txt output_db_tmp dress_list_after_change.txt sed_tmp.txt
+rm -f character_id_list.txt dress_id_list.txt tmp_.db output_db_.txt output_db_tmp.txt dress_list_after_change.txt sed_tmp.txt
