@@ -562,9 +562,9 @@ esac
 EXETIMEA="${SECONDS}";EXETIME="$((${EXETIMEA}-${EXETIMEB}))";if [[ ${EXETIME} -ge 3600 ]]; then HOURS="$((${EXETIME}/3600))時間";EXETIME=$((${EXETIME}%3600));fi;if [[ ${EXETIME} -ge 60 ]]; then MINUTES="$((${EXETIME}/60))分";EXETIME=$((${EXETIME}%60));fi;echo "所要時間は ${HOURS}${MINUTES}${EXETIME}秒 でした。"
 #実行時間を計算して表示します。
 rm -f list.txt
-cat ${PREFIX}/masterfile/master.txt | grep 'text_data VALUES(6,' | awk -F "[,\']" '{printf "%s %s\n" ,$3,$5}' 2>/dev/null > "${PREFIX}/キャラID表.txt"
-cat ${PREFIX}/masterfile/master.txt | grep 'text_data VALUES(16,' | awk -F "[,\']" '{printf "%s %s\n" ,$3,$5}' 2>/dev/null > "${PREFIX}/ライブID表.txt"
-cat ${PREFIX}/masterfile/master.txt | grep 'text_data VALUES(47,' | awk -F "[,\']" '{printf "%s %s\n" ,$3,$5}' 2>/dev/null > "${PREFIX}/スキルID表.txt"
+echo -ne '.mode csv\nselect * from text_data;'| sqlite3 master/master.mdb | sed 's/\r//g' | grep -E ^6, | awk -F'[,]' 'gsub("^\"","",$4)gsub("\"$","",$4){printf "%s %s\n" ,$3,$4}' 2>/dev/null > "${PREFIX}/キャラID表.txt"
+echo -ne '.mode csv\nselect * from text_data;'| sqlite3 master/master.mdb | sed 's/\r//g' | grep -E ^16, | awk -F'[,]' 'gsub("^\"","",$4)gsub("\"$","",$4){printf "%s %s\n" ,$3,$4}' 2>/dev/null > "${PREFIX}/ライブID表.txt"
+echo -ne '.mode csv\nselect * from text_data;'| sqlite3 master/master.mdb | sed 's/\r//g' | grep -E ^47, | awk -F'[,]' 'gsub("^\"","",$4)gsub("\"$","",$4){printf "%s %s\n" ,$3,$4}' > "${PREFIX}/スキルID表.txt"
 echo "ファイル名にはキャラのIDが大体入っているのでそのIDで誰の声が入っているかなどがわかります。"
 echo "キャラID表.txt にIDが書いてあるので参考にしてみてください。"
 echo "動画は"
