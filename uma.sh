@@ -396,9 +396,6 @@ vgm_processing(){
 	MAXTRACK=$(($(hexdump -s 8 -n 2 -v -e '/1 "%02X "' "${FILE}" | awk -F ' ' '{printf "ibase=16; %s%s\n",$2,$1}' | bc)-1))
 	#sound_wavに入っているその音声のトラック数とawbの中に入っているトラック数が一致している場合スキップします。
 	#差分だけできないか試しましたがうまく出来そうになかったのでやめました。(実況などトラックの後ろに追加されていく形でないものもあるため)
-	echo "${FILE}"
-	echo "$(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_"* 2> /dev/null | grep -E "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_[0-9]{4}.wav" | wc -l)"
-	echo "$((${MAXTRACK}+1))"
 	if [[ ! "$(ls -1 "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_"* 2> /dev/null | grep -E "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_[0-9]{4}.wav" | wc -l)" == "$((${MAXTRACK}+1))" ]]; then
 		for TRACK in $(seq -w 0000 ${MAXTRACK});do
 			${VGMSTREAM} -s $((10#${TRACK}+1)) -o "$(echo ${FILE/.awb} | sed -e s/^sound/sound_wav/)_${TRACK}.wav" ${FILE} > /dev/null 2>&1
