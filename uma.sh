@@ -80,8 +80,13 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 		sudo apt install tar git sqlite3
 		mkdir -p ~/commands/bin
 		wget $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'linux/vgmstream-cli.tar.gz')
-		tar -xvf vgmstream-cli.tar.gz -C ~/commands/bin
-		rm vgmstream-cli.tar.gz
+		if [[ ${?} == 0 ]]; then
+			tar -xvf vgmstream-cli.tar.gz -C ~/commands/bin
+			rm vgmstream-cli.tar.gz
+		else
+			curl -o vgmstream-cli.zip "$(curl -sL 'https://github.com/vgmstream/vgmstream/releases/latest' |grep /vgmstream-cli|awk -F'["]' '{printf "https://github.com%s\n",$2}')"
+			unzip -d ~/commands/bin
+		fi
 	}
 	install_sqlite(){
 		echo "apt でsqlite3をインストールします。"
