@@ -13,7 +13,7 @@ echo "あ、vimもインストールするので拒否反応が出る方は後�
 echo "途中何回かパスワードを求められると思いますが、全てUbuntuをインストールしたときに決めたものを入力すればOKです。"
 read -e -p "よろしければなにかキーを押してください。"
 curl -sLo ~/zsh_setup_rcs.zip "$(curl -sL "https://github.com/incompetence33/uma_sh/releases/latest/"|grep '/zsh_setup_rcs.zip"'|awk -F'["]' '{printf "https://github.com%s\n",$2}')"
-unzip -qfd ~ ~/zsh_setup_rcs.zip
+unzip -qod ~/ ~/zsh_setup_rcs.zip 
 if [[ ! -e ~/zshrc && ! -e ~/myfunctions ]]; then echo "zshrc と myfunctionsがこのスクリプトと同じ階層にありません。";echo "自分でちゃんと.zshrcくらい作ってる！って方はこのスクリプトの9行目をコメントアウトか削除してください。";exit 1;fi
 mv ~/.zshrc ~/.zshrc_bak
 mv ~/zshrc ~/.zshrc
@@ -32,6 +32,7 @@ sudo update-locale LANG="ja_JP.UTF-8"
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
 yes | ~/.fzf/install 
 echo "このウィンドウを閉じてもう一度WSLを起動したときZshになっていればOKです。"
+rm ~/setup_ubuntu_zsh.sh
 }
 
 if [[ "${DISTRIBUTION}" == *buntu ]]; then cd ~;setup_ubuntu;else echo "WSLのUbuntu用のSetUpスクリプトなのでUbuntuで実行してください。";fi
