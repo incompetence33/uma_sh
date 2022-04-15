@@ -16,8 +16,8 @@ else
 	echo "vgmstreamなどの必要なコマンドは手動でインストールして下さい。"
 	DIST_FLAG=2
 fi
-if [[ ! $(basename "$(pwd -P)") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";exit 1;fi
-if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
+if [[ ! $(basename "$(pwd -P)") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "(今のあなたの場所は $(pwd -P))";echo "が一般的だと思います。";exit 1;fi
+if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "(今のあなたの場所は $(pwd -P))";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
 export PATH="${HOME}/tmp_com/bin:${HOME}/commands/bin:${PATH}"
 #このスクリプトでvgmstreamをインストールするとここにインストールされるのでPATHを通します。
 yes_or_no(){
