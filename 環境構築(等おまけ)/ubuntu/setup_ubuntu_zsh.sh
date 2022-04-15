@@ -12,12 +12,12 @@ echo "それでも最低限使っていけるようにはなっていますが�
 echo "あ、vimもインストールするので拒否反応が出る方は後でアンインストールしておいてください。"
 echo "途中何回かパスワードを求められると思いますが、全てUbuntuをインストールしたときに決めたものを入力すればOKです。"
 read -e -p "よろしければなにかキーを押してください。"
-curl -o zsh_setup_rcs.zip -sL "$(curl -sL "https://github.com/incompetence33/uma_sh/releases/latest/"|grep '/zsh_setup_rcs.zip"'|awk -F'["]' '{printf "https://github.com%s\n",$2}')"
-unzip -q zsh_setup_rcs.zip
-if [[ ! -e zshrc && ! -e myfunctions ]]; then echo "zshrc と myfunctionsがこのスクリプトと同じ階層にありません。";echo "自分でちゃんと.zshrcくらい作ってる！って方はこのスクリプトの9行目をコメントアウトか削除してください。";exit 1;fi
+curl -sLo ~/zsh_setup_rcs.zip "$(curl -sL "https://github.com/incompetence33/uma_sh/releases/latest/"|grep '/zsh_setup_rcs.zip"'|awk -F'["]' '{printf "https://github.com%s\n",$2}')"
+unzip -qfd ~ ~/zsh_setup_rcs.zip
+if [[ ! -e ~/zshrc && ! -e ~/myfunctions ]]; then echo "zshrc と myfunctionsがこのスクリプトと同じ階層にありません。";echo "自分でちゃんと.zshrcくらい作ってる！って方はこのスクリプトの9行目をコメントアウトか削除してください。";exit 1;fi
 mv ~/.zshrc ~/.zshrc_bak
-mv zshrc ~/.zshrc
-mv myfunctions ~/.myfunctions
+mv ~/zshrc ~/.zshrc
+mv ~/myfunctions ~/.myfunctions
 rm ~/zsh_setup_rcs.zip
 sudo sed -i.bak -e "s/http:\/\/archive\.ubuntu\.com/http:\/\/jp\.archive\.ubuntu\.com/g" /etc/apt/sources.list
 sudo apt update && \
