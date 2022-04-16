@@ -2,7 +2,9 @@
 LANG="ja_JP.UTF-8"
 trap "echo;echo 'CTRL+C が入力されたので終了します';exit 1" SIGINT
 DIST_FLAG=0
-BASE_POINT="${PWD}"
+Script_Dir="$(dirname "${0}")"
+cd "${Script_Dir}"
+BASE_POINT="$(pwd -P)"
 #cdしたあと絶対パスでもとに戻れるようにします。
 DISTRIBUTION="$(cat /etc/os-release | grep "^NAME=" |awk -F '=' '{gsub(/"/,"",$2);printf $2"\n"}')"
 if [[ "${DISTRIBUTION}" == *buntu ]]; then
