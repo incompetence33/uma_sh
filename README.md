@@ -42,3 +42,7 @@
 ## 補足
 環境構築(おまけ)の中身はZSHの環境を構築できるスクリプトです(bashのままだと少し使いにくいので)。
 WSL入れたけど、どうすればいいかわからないって方はとりあえず実行してみるとある程度使える環境が出来上がると思います。
+
+もしインストールや使用時にわからないことがあれば、解決に至る質問が先にでている可能性がありますので [issues](https://github.com/incompetence33/uma_sh/issues?q=is%3Aissue) を一度御覧ください。
+
+それでも解決しない場合新しく質問を [new issues](https://github.com/incompetence33/uma_sh/issues/new/choose) からお書き下さい。
