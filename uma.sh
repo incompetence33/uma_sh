@@ -86,8 +86,9 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 			tar -xvf vgmstream-cli.tar.gz -C ~/commands/bin
 			rm vgmstream-cli.tar.gz
 		else
-			curl -o vgmstream-cli.zip "$(curl -sL 'https://github.com/vgmstream/vgmstream/releases/latest' |grep /vgmstream-cli|awk -F'["]' '{printf "https://github.com%s\n",$2}')"
-			unzip -d ~/commands/bin
+			curl -Lo vgmstream-cli.zip "$(curl -sL 'https://github.com/vgmstream/vgmstream/releases/latest' |grep /vgmstream-cli|awk -F'["]' '{printf "https://github.com%s\n",$2}')"
+			unzip -d ~/commands/bin vgmstream-cli.zip
+			rm vgmstream-cli.zip
 		fi
 	}
 	install_sqlite(){
