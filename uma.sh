@@ -73,7 +73,7 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 		##インストール場所を「~/commands/bin」にすることにしました。
 		##いらんかったら消してくれって意味で、いままでは「~/tmp_com」って名前にしてたんだけどよくわからんしな。
 		##ただ、どっちにあっても大丈夫なようにはしておくので、バイナリの配置場所をいまから変える必要はないです。
-		echo "~/commands/binにvgmstreamをビルドしてインストールします。"
+		echo "~/commands/binにvgmstreamをインストールします。"
 		FLAG=1
 		yes_or_no
 		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
@@ -90,6 +90,7 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 			unzip -d ~/commands/bin vgmstream-cli.zip
 			rm vgmstream-cli.zip
 		fi
+		chmod 777 ~/commands/bin/vgmstream-cli
 	}
 	install_sqlite(){
 		echo "apt でsqlite3をインストールします。"
