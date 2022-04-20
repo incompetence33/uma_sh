@@ -79,12 +79,12 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
 		sudo apt update 
 		sudo apt upgrade -y
-		sudo apt install tar git sqlite3
+		sudo apt install tar git sqlite3 curl 
 		mkdir -p ~/commands/bin
-		wget $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'linux/vgmstream-cli.tar.gz')
+		curl -o ~/vgmstream-cli.tar.gz $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'linux/vgmstream-cli.tar.gz')
 		if [[ ${?} == 0 ]]; then
-			tar -xvf vgmstream-cli.tar.gz -C ~/commands/bin
-			rm vgmstream-cli.tar.gz
+			tar -xvf ~/vgmstream-cli.tar.gz -C ~/commands/bin
+			rm ~/vgmstream-cli.tar.gz
 		else
 			curl -Lo ~/vgmstream-cli.zip "$(curl -sL 'https://github.com/vgmstream/vgmstream/releases/latest' |grep /vgmstream-cli |awk -F'["]' '{printf "https://github.com%s\n",$2}')"
 			unzip -d ~/commands/bin ~/vgmstream-cli.zip
