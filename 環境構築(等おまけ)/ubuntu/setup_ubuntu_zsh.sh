@@ -25,7 +25,7 @@ rm ~/zsh_setup_rcs.zip
 echo "デフォルトのShellをBashからZshにします。"
 echo "パスワードを入力してください。"
 sudo sed '$a /bin/zsh' /etc/shells
-chsh -s /bin/zsh
+chsh -s /usr/bin/zsh
 git clone https://github.com/zsh-users/zsh-completions.git ~/.zsh-completions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh-syntax-highlighting
 sudo update-locale LANG="ja_JP.UTF-8"
