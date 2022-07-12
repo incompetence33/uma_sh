@@ -14,7 +14,7 @@ echo "途中何回かパスワードを求められると思いますが、全�
 read -e -p "よろしければなにかキーを押してください。"
 sudo sed -i.bak -e "s/http:\/\/archive\.ubuntu\.com/http:\/\/jp\.archive\.ubuntu\.com/g" /etc/apt/sources.list
 sudo apt update && \
-sudo apt install aria2 audacious audacious-dev autoconf automake build-essential cmake curl flex g++ gcc git jq lame language-pack-ja libao-dev libglib2.0-dev libgtk2.0-dev liblz4-tool libmpg123-dev libpango1.0-dev libspeex-dev libtool libvorbis-dev make manpages-ja manpages-ja-dev nkf peco perl pkg-config rename sqlite3 tar unar unzip vim x11-utils zsh
+sudo apt install aria2 audacious audacious-dev autoconf automake git jq lame language-pack-ja libao-dev libglib2.0-dev libgtk2.0-dev liblz4-tool libmpg123-dev libpango1.0-dev libspeex-dev libtool libvorbis-dev make manpages-ja manpages-ja-dev nkf peco perl pkg-config rename sqlite3 tar unar unzip vim x11-utils zsh
 curl -sLo ~/zsh_setup_rcs.zip "$(curl -sL "https://github.com/incompetence33/uma_sh/releases/latest/"|grep '/zsh_setup_rcs.zip"'|awk -F'["]' '{printf "https://github.com%s\n",$2}')"
 unzip -qod ~/ ~/zsh_setup_rcs.zip 
 if [[ ! -e ~/zshrc && ! -e ~/myfunctions ]]; then echo "zshrc と myfunctionsがこのスクリプトと同じ階層にありません。";echo "自分でちゃんと.zshrcくらい作ってる！って方はこのスクリプトの9行目をコメントアウトか削除してください。";exit 1;fi

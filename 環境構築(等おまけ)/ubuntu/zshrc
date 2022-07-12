@@ -17,16 +17,6 @@ path=(
 
 export PYTHONIOENCODING=utf-8
 
-#ls系のやつとか
-alias l='ls -1 -v --color --group-directories-first'
-alias la='ls -lah -v --color --group-directories-first'
-alias ll='ls -lh --color --group-directories-first'
-alias ls='ls --color --group-directories-first'
-alias grep='grep --color=auto'
-alias ...='cd ../../'
-alias mkdir='mkdir -p'
-alias ffmpeg="ffmpeg -hide_banner "
-alias ffprobe="ffprobe -hide_banner "
 
 #ここをいじるなら少し調べてからにするといいだろう。
 setopt append_history
