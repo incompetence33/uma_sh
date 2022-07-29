@@ -1,24 +1,44 @@
+#書き換えるときには十分注意されたし。
 LANG="ja_JP.UTF-8"
 source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.zsh-completions/zsh-completions.plugin.zsh
-# あるマシンには存在するが別のマシンには存在しないかもしれないパスを PATH に追加したいならば、
+
+# あるマシンには存在するが別のマシンには存在しないパスを PATH に追加したいならば、
 # パスの後ろに (N-/) をつけるとよい
 # こうすると、パスの場所にディレクトリが存在しない場合、パスが空文字列に置換されるぞ。
 path=(
-    ~/tmp_com/bin(N-/)
-    ~/go/bin(N-/)
+	/commands/(N-/)
+    ~/shellscripts/(N-/)
+    ~/commands/(N-/)
+    ~/go/bin/(N-/)
     ~/.local/bin(N-/)
+    /usr/local/ffmpeg_my_build/bin/(N-/)
+    /usr/local/cuda/bin/(N-/)
     /home/linuxbrew/.linuxbrew/bin(N-/)
-    ~/.cargo/bin(N-/)
-	~/commands(N-/)
+    ~/.cargo/bin/(N-/)
     $path
 )
 #
-
+#~/shellscripts に入っているスクリプトを.shなしで使えるようにする。
+#そのためスクリプトの名前は既存のコマンドと被らないようにしなければならない。
+#そうじゃないとそのコマンドが使えなくなっちゃうからねー。
+for SCRIP in $(\ls -v ~/shellscripts/*.sh);do
+	alias "$(basename ${SCRIP/%.*})"="$(basename $SCRIP)"
+done
 export PYTHONIOENCODING=utf-8
 
+cheat-sheet () { zle -M "`cat ~/zsh/cheat-sheet.conf`" }
+zle -N cheat-sheet
+bindkey "^[^h" cheat-sheet
 
-#ここをいじるなら少し調べてからにするといいだろう。
+git-cheat () { zle -M "`cat ~/zsh/git-cheat.conf`" }
+zle -N git-cheat
+bindkey "^[^g" git-cheat
+
+
+alias ffprobe="ffprobe -hide_banner "
+
+#ここをいじるなら少し調べてしっかり理解してからにするといいだろう。
 setopt append_history
 setopt auto_cd
 setopt auto_menu
@@ -47,8 +67,11 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 autoload -U colors; colors
 autoload -Uz compinit; compinit
 autoload -Uz vcs_info
+#export LSCOLORS="dxfxcxdxbxegedabagacad"
 export LS_COLORS='di=34;46:ln=36;40:so=32:pi=33;40:ex=32:bd=37;46:cd=34:su=0;41:sg=0;46:tw=34;42:ow=34;42:or=31:'
 export GREP_COLOR='1;33'
+#cdpath=()
+#
 #zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
@@ -74,31 +97,33 @@ zstyle ':vcs_info:*' formats ' %c%u(%s:%b)'
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' stagedstr '+'
 zstyle ':vcs_info:git:*' unstagedstr '!'
+alias sudo='sudo '
 if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 export DISPLAY=:0.0
 export EDITOR='vim'
 export VISUAL='vim'
-#プロンプトの設定。ここを変えるとコマンドを打つところの顔を変えることができる(別に顔文字である必要はないが)。
-#上の顔がひとつ前のコマンドが成功(ステータス0)しているとき表示されるもので、下のはコマンドが失敗(ステータスが0以外)のときに表示される。
+#プロンプトの設定。ここを変えるとコマンドを打つ時の左側の顔を変えることができる。
 IIOKAO=$'(=^^=%)'
 ZANNEN=$'(-_-;%)'
 #prompt
 PROMPT='
 %{${fg[yellow]}%}%~%{${reset_color}%}
-%(?.%F{158}${IIOKAO}.%F{205}${ZANNEN})%f%b$ '                                                                               
+[%n@%md]${vcs_info_msg_0_}
+%(?.%F{158}${IIOKAO}.%F{205}${ZANNEN})%f%b$ '
+#PROMPT='%(?.%F{158}(=^^=%).%F{205}(-_-;%))%f%b$ '                                                                                 
 PROMPT2='%B%F{green}%_%f%b> '
 #ヒストリ
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
+#~/.myfunctionsの中身を読み込んで実行するよ。
+#このようにしてaliasを起動時に設定したり、毎回やるルーティーンを自動化できるよ。
+source ~/.myfunctions
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 if [ -d $HOME/.anyenv ]; then
     export PATH="$HOME/.anyenv/bin:$PATH"
     eval "$(anyenv init -)"
 fi
-
-#~/.myfunctionsの中身を読み込んで実行するよ。
-#このようにしてaliasを起動時に設定したり、毎回やるルーティーンを自動化できるよ。
-source ~/.myfunctions
