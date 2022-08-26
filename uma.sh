@@ -576,6 +576,7 @@ echo -ne '.mode csv\nselect * from text_data;'| sqlite3 master/master.mdb | sed 
 echo -ne '.mode csv\nselect * from text_data;'| sqlite3 master/master.mdb | sed 's/\r//g' | grep -E ^47, | awk -F'[,]' 'gsub("^\"","",$4)gsub("\"$","",$4){printf "%s %s\n" ,$3,$4}' > "${PREFIX}/スキルID表.txt"
 echo "ファイル名にはキャラのIDが大体入っているのでそのIDで誰の声が入っているかなどがわかります。"
 echo "キャラID表.txt にIDが書いてあるので参考にしてみてください。"
-echo "動画は"
+echo "動画は「CRID(.usm)分離ツール」に"
 echo "-b 0000450D -a 608C479F"
 echo "でできるので頑張ってください。"
+echo "「CRID(.usm)分離ツール」は5chのどこかに転がっているので探してみてください。"
