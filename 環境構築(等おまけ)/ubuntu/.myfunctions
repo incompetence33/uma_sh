@@ -16,19 +16,26 @@ alias apu="sudo apt update"
 alias apug="sudo apt -y full-upgrade"
 alias api="sudo apt install"
 alias apt="sudo apt"
-mkd (){
+mkd(){
         mkdir -p "${1-"build"}"
         cd "${1-"build"}"
 }
 test-f(){
-  test -f $1
+  test -f $@
 }
+
+#cdコマンドのあとに移動先のディレクトリ内を表示する関数。
+#cdだけでEnterを押してしまってもホームディレクトリに戻らないようにしてあるのですが、戻してほしいなら「${cd_c} "${1}"」を「${cd_c} "${1-"~"}"」などに変えてください。
 cd_(){
         cd_c='cd'
-        ${cd_c} "${@}"
-        ls --color --group-directories-first
+        ${cd_c} "${1}" &&\
+		if [ "$(find -maxdepth 1 -name '*' | wc -l)" -le "200" ]; then ls --color --group-directories-first;else echo -ne "$(find -maxdepth 1 -name '*' | head -n200 | xargs -n2)\netc...\n";fi
 }
 alias cd="cd_"
+compdef _cd cd_
+#ここまでcd関連
+#気に入らなければ消してください。
+
 sdmou() {
   if [ -z $1 ]; then
     echo "You have to input name of drive"
@@ -70,12 +77,6 @@ gic_n(){
 	yokosen
 	ls
 }
-#ここでbashならこのコマンドを実行する
-#こうすればbashでうごかすshellscriptのなかでrcに記述したfunctionが使える(使えないことが判明、ただbashに切り替えたときにこれは意味がある。)。
-if [ $0 = bash ]; then
- export -f fd
- export -f yokosen
-fi
 
 aria2t() {
     read "URL?URL:"

@@ -12,29 +12,13 @@ path=(
     ~/commands/(N-/)
     ~/go/bin/(N-/)
     ~/.local/bin(N-/)
-    /usr/local/ffmpeg_my_build/bin/(N-/)
     /usr/local/cuda/bin/(N-/)
     /home/linuxbrew/.linuxbrew/bin(N-/)
     ~/.cargo/bin/(N-/)
     $path
 )
 #
-#~/shellscripts に入っているスクリプトを.shなしで使えるようにする。
-#そのためスクリプトの名前は既存のコマンドと被らないようにしなければならない。
-#そうじゃないとそのコマンドが使えなくなっちゃうからねー。
-for SCRIP in $(\ls -v ~/shellscripts/*.sh);do
-	alias "$(basename ${SCRIP/%.*})"="$(basename $SCRIP)"
-done
 export PYTHONIOENCODING=utf-8
-
-cheat-sheet () { zle -M "`cat ~/zsh/cheat-sheet.conf`" }
-zle -N cheat-sheet
-bindkey "^[^h" cheat-sheet
-
-git-cheat () { zle -M "`cat ~/zsh/git-cheat.conf`" }
-zle -N git-cheat
-bindkey "^[^g" git-cheat
-
 
 alias ffprobe="ffprobe -hide_banner "
 
@@ -118,8 +102,8 @@ PROMPT2='%B%F{green}%_%f%b> '
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
-#~/.myfunctionsの中身を読み込んで実行するよ。
-#このようにしてaliasを起動時に設定したり、毎回やるルーティーンを自動化できるよ。
+#~/.myfunctionsの中身を読み込んで実行する。
+#このようにしてaliasを起動時に設定したり、毎回やるルーティーンを自動化できる。
 source ~/.myfunctions
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
