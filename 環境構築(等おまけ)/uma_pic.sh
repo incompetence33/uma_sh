@@ -12,8 +12,10 @@ done
 echo "ダウンロード開始……"
 MAX=$(wc -l <tmp.txt)
 for A in $(seq 1 ${MAX});do
-	curl -s -o "$(awk -F '____' 'NR=='${A}'{printf "%s%s.png\n",$1,$2}' tmp.txt)" "$(awk -F '____' 'NR=='${A}'{printf "%s\n",$3}' tmp.txt)"
-	echo -ne "ダウンロード数: ${A}/${MAX}\c"
+	URL="$(awk -F '____' 'NR=='${A}'{printf "%s\n",$3}' tmp.txt)"
+	FILENAME="$(awk -F '____' 'NR=='${A}'{printf "%s%s\n",$1,$2}' tmp.txt).${URL##*.}"
+	if [[ ! -f "${FILENAME}" ]]; then curl -s -o "${FILENAME}" "${URL}";fi
+	echo -ne "進捗: ${A}/${MAX}\c"
 	echo -ne "\r\c"
 done
 echo "ダウンロード数: ${A}/${MAX}"
