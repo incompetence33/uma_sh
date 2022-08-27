@@ -4,22 +4,6 @@ if [ "${1}" == "-h" ]; then echo "これは公式サイトからウマ娘の立�
 if ! type jq>/dev/null; then sudo apt update && sudo apt install jq;fi
 BASEPOINT="$(pwd -P)"
 mkdir -p pictures && cd pictures
-##旧バージョン
-#curl 'https://umamusume.jp/app/wp-json/wp/v2/character?per_page=100' | jq | tr -d ' ' | tr -d '\n' | sed 's/templated/\n/g' | sed -e 's/prev.*$//g' >tmp.txt
-#for A in $(seq $(wc -l < tmp.txt));do
-#	awk 'NR=='${A}'{print}' <tmp.txt >tmp_.txt
-#	sed 's/,/\n/g' tmp_.txt| sed -e 's/\[//g' -e 's/]//g' -e 's/{//g' -e 's/}//g' -e 's/"//g' -e 's/\\//g' -e 's/chara_img:/chara_img:\n/g' -e 's/<small.*>$/STARTING_FUTURE/g' >tmp__.txt
-#	uma_name="$(grep title tmp__.txt| awk -F 'title:rendered:' '{printf "%s\n",$2}')"
-#	grep -B 1 image <tmp__.txt > image.txt
-#	B=1
-#	for C in $(seq $(($(wc -l < image.txt)/2)));do
-#		curl -s "$(awk -F 'image:' 'NR=='${B}+1'{printf "%s",$2}' <image.txt)" > "${uma_name}_$(awk -F ':' 'NR=='${B}'{printf "%s\n",$2}' <image.txt).png"
-#		if [[ ! $? == 0 ]];then echo ${uma_name};read;fi
-#		B=$((${B}+2))
-#	done
-#done
-#rm -f tmp.txt tmp_.txt tmp__.txt image.txt
-##
 rm -f tmp.txt
 echo "URLを取得しています……"
 for A in `seq 0 10`;do
