@@ -1,5 +1,5 @@
 #書き換えるときには十分注意されたし。
-LANG="ja_JP.UTF-8"
+export LANG="ja_JP.UTF-8"
 source ~/.zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.zsh-completions/zsh-completions.plugin.zsh
 

@@ -64,17 +64,17 @@ yokosen(){
     printf -v _hr "%*s" ${SCREEN_WIDTH} && echo ${_hr// /${1-${LINEWORD}}}
 }
 gic(){
-	git clone --depth 1 ${@}
-	\cd "$(echo ${@/.git}|awk -F'[ |/]' '{printf "%s\n",$NF}')"
-	git submodule update --init
-	yokosen
+	git clone --depth 1 ${@} && \
+	\cd "$(echo ${@/.git}|awk -F'[ |/]' '{printf "%s\n",$NF}')" && \
+	git submodule update --init && \
+	yokosen && \
 	ls
 }
 gic_n(){
-	git clone ${@}
-	\cd "$(echo ${@/.git}|awk -F'[ |/]' '{printf "%s\n",$NF}')"
-	git submodule update --init
-	yokosen
+	git clone ${@} && \
+	\cd "$(echo ${@/.git}|awk -F'[ |/]' '{printf "%s\n",$NF}')" && \
+	git submodule update --init && \
+	yokosen && \
 	ls
 }
 

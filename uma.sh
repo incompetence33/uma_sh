@@ -1,9 +1,10 @@
 #!/bin/bash
 LANG="ja_JP.UTF-8"
+WINDOWS_USERNAME="$(/mnt/c/Windows/System32/cmd.exe <<<"echo %USERNAME%" 2> /dev/null | tail -n3 | head -n1 | tr '\r' '\n')"
 trap "echo;echo 'CTRL+C が入力されたので終了します';exit 1" SIGINT
 DIST_FLAG=0
 Script_Dir="$(dirname "${0}")"
-cd "${Script_Dir}"
+#cd "${Script_Dir}"
 BASE_POINT="$(pwd -P)"
 #cdしたあと絶対パスでもとに戻れるようにします。
 DISTRIBUTION="$(cat /etc/os-release | grep "^NAME=" |awk -F '=' '{gsub(/"/,"",$2);printf $2"\n"}')"
@@ -18,8 +19,8 @@ else
 	echo "vgmstreamなどの必要なコマンドは手動でインストールして下さい。"
 	DIST_FLAG=2
 fi
-if [[ ! $(basename "$(pwd -P)") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "(今のあなたの場所は $(pwd -P))";echo "が一般的だと思います。";exit 1;fi
-if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/ユーザ名/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "(今のあなたの場所は $(pwd -P))";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
+if [[ ! $(basename "$(pwd -P)") == umamusume ]]; then echo "umamusumeフォルダーで実行してくれ";echo "/mnt/c/Users/${WINDOWS_USERNAME}/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "(今のあなたの場所は $(pwd -P))";exit 1;fi
+if [[ -z meta ]]; then echo "mata ファイルがあるところで実行してくれ。";echo "/mnt/c/Users/${WINDOWS_USERNAME}/AppData/LocalLow/Cygames/umamusume";echo "が一般的だと思います。";echo "(今のあなたの場所は $(pwd -P))";echo "もしくは一度も起動していないためにmetaファイルがないという可能性もあります。";exit 1;fi
 export PATH="${HOME}/tmp_com/bin:${HOME}/commands/bin:${PATH}"
 #このスクリプトでvgmstreamをインストールするとここにインストールされるのでPATHを通します。
 yes_or_no(){
@@ -81,12 +82,12 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 		sudo apt upgrade -y
 		sudo apt install tar git sqlite3 curl 
 		mkdir -p ~/commands/bin
-		curl -o ~/vgmstream-cli.tar.gz $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'linux/vgmstream-cli.tar.gz')
+		curl -o ~/vgmstream-cli.tar.gz $(curl https://dl.vgmstream.org | tr '"' '\n' | \grep 'linux/vgmstream-cli.tar.gz')
 		if [[ ${?} == 0 ]]; then
 			tar -xvf ~/vgmstream-cli.tar.gz -C ~/commands/bin
 			rm ~/vgmstream-cli.tar.gz
 		else
-			curl -Lo ~/vgmstream-cli.zip "$(curl -sL 'https://github.com/vgmstream/vgmstream/releases/latest' |grep /vgmstream-cli |awk -F'["]' '{printf "https://github.com%s\n",$2}')"
+			curl -Lo ~/vgmstream-cli.zip "https://github.com/vgmstream/vgmstream/releases/download/$(curl -sL 'https://github.com/vgmstream/vgmstream/releases/latest' |grep \<title\>|awk '{print $2}')/vgmstream-cli.zip"
 			unzip -d ~/commands/bin ~/vgmstream-cli.zip
 			rm ~/vgmstream-cli.zip
 		fi
