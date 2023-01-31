@@ -82,8 +82,7 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 		sudo apt upgrade -y
 		sudo apt install tar git sqlite3 curl 
 		mkdir -p ~/commands/bin
-		curl -o ~/vgmstream-cli.tar.gz $(curl https://dl.vgmstream.org | tr '"' '\n' | \grep 'linux/vgmstream-cli.tar.gz')
-		if [[ ${?} == 0 ]]; then
+		if curl -o ~/vgmstream-cli.tar.gz $(curl -s https://dl.vgmstream.org | tr '"' '\n' | \grep 'linux/vgmstream-cli.tar.gz'); then
 			tar -xvf ~/vgmstream-cli.tar.gz -C ~/commands/bin
 			rm ~/vgmstream-cli.tar.gz
 		else
@@ -110,7 +109,7 @@ elif [[ "${DIST_FLAG}" == 1 ]]; then
 		if [[ ! ${INSTALL_FLAG} == 1 ]]; then return 1;fi
 		mkdir -p ~/commands/bin
 		mkdir -p ~/tmp_vg_install
-		wget -P ~/tmp_vg_install $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip') 
+		wget -P ~/tmp_vg_install $(curl https://vgmstream.org/downloads | tr '"' '\n' | grep 'windows/vgmstream-win.zip')
 		unzip ~/tmp_vg_install/vgmstream-win.zip -d ~/tmp_vg_install
 		mv ~/tmp_vg_install/test.exe ~/tmp_vg_install/vgmstream-cli.exe
 		mv ~/tmp_vg_install/*.dll ~/tmp_vg_install/*.exe ~/commands/bin
