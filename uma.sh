@@ -83,11 +83,11 @@ if [[ "${DIST_FLAG}" == 0 ]]; then
 		sudo apt install tar git sqlite3 curl 
 		mkdir -p ~/commands/bin
 		if curl -o ~/vgmstream-cli.tar.gz $(curl -s https://dl.vgmstream.org | tr '"' '\n' | \grep 'linux/vgmstream-linux-cli.tar.gz'); then
-			tar -xvf ~/vgmstream-cli.tar.gz -C ~/commands/bin
+			tar -xvf ~/vgmstream-linux-cli.tar.gz -C ~/commands/bin
 			rm ~/vgmstream-cli.tar.gz
 		else
 			curl -Lo ~/vgmstream-cli.zip "https://github.com/vgmstream/vgmstream/releases/download/$(curl -sL 'https://github.com/vgmstream/vgmstream/releases/latest' |grep \<title\>|awk '{print $2}')/vgmstream-cli-linux.zip"
-			unzip -d ~/commands/bin ~/vgmstream-cli.zip
+			unzip -d ~/commands/bin ~/vgmstream-cli-linux.zip
 			rm ~/vgmstream-cli.zip
 		fi
 		chmod 777 ~/commands/bin/vgmstream-cli
