@@ -17,98 +17,94 @@ alias apug="sudo apt -y full-upgrade"
 alias api="sudo apt install"
 alias apt="sudo apt"
 mkd(){
-        mkdir -p "${1-"build"}"
-        cd "${1-"build"}"
+	mkdir -p "${1-"build"}"
+	cd "${1-"build"}"
 }
 test-f(){
-  test -f $@
+	test -f $@
 }
 
 #cdコマンドのあとに移動先のディレクトリ内を表示する関数。
-#cdだけでEnterを押してしまってもホームディレクトリに戻らないようにしてあるのですが、戻してほしいなら「${cd_c} "${1}"」を「${cd_c} "${1-"~"}"」などに変えてください。
+#cdだけでEnterを押してしまってもホームディレクトリに戻らないようにしてあるのですが、もとの仕様に戻すならば「${cd_c} "${1}"」を「${cd_c} "${1-"~"}"」などに変えてください。
 cd_(){
-        cd_c='cd'
-        ${cd_c} "${1}" &&\
-		if [ "$(find -maxdepth 1 -name '*' | wc -l)" -le "200" ]; then ls --color --group-directories-first;else echo -ne "$(find -maxdepth 1 -name '*' | head -n200 | xargs -n2)\netc...\n";fi
+	cd_c='cd'
+	${cd_c} "${1}" &&\
+	if [ "$(find -maxdepth 1 -name '*' | wc -l)" -le "200" ]; then ls --color --group-directories-first;else echo -ne "$(find -maxdepth 1 -name '*' | head -n200 | xargs -n2)\netc...\n";fi
 }
 alias cd="cd_"
 compdef _cd cd_
 #ここまでcd関連
 #気に入らなければ消してください。
 
-sdmou() {
-  if [ -z $1 ]; then
-    echo "You have to input name of drive"
-    else
-      DRIV=`tr '[a-z]' '[A-Z]' <<<$1`
-      DIRC=`tr '[A-Z]' '[a-z]' <<<$1`
-      if [ ! -d /mnt/${DIRC} ]; then
-        sudo mkdir /mnt/$DIRC
-      fi
-      sudo mount -t drvfs $DRIV: /mnt/$DIRC
-      cd /mnt/$DIRC
-  fi
+sdmou(){
+	if [ -z $1 ]; then
+		echo "You have to input name of drive"
+		else
+			DRIV=`tr '[a-z]' '[A-Z]' <<<$1`
+			DIRC=`tr '[A-Z]' '[a-z]' <<<$1`
+			if [ ! -d /mnt/${DIRC} ]; then
+				sudo mkdir /mnt/$DIRC
+			fi
+			sudo mount -t drvfs $DRIV: /mnt/$DIRC
+			cd /mnt/$DIRC
+	fi
 }
-sdumou() {
-  sudo umount /mnt/`\ls /mnt/ | fzf --reverse`
+sdumou(){
+	sudo umount /mnt/`\ls /mnt/ | fzf --reverse`
 }
 yokosen(){
-    if [ -n "${TERM}" ];
-      then SCREEN_WIDTH=$(tput cols);
-      else SCREEN_WIDTH=20;
-    fi
-    LINEWORD="-"
-    if [ -n "$1" ]; then
-      LINEWORD="$1"
-    fi
-    printf -v _hr "%*s" ${SCREEN_WIDTH} && echo ${_hr// /${1-${LINEWORD}}}
+		if [ -n "${TERM}" ];
+			then SCREEN_WIDTH=$(tput cols);
+			else SCREEN_WIDTH=20;
+		fi
+		LINEWORD="-"
+		if [ -n "$1" ]; then
+			LINEWORD="$1"
+		fi
+		printf -v _hr "%*s" ${SCREEN_WIDTH} && echo ${_hr// /${1-${LINEWORD}}}
 }
 gic(){
 	git clone --depth 1 ${@} && \
-	\cd "$(echo ${@/.git}|awk -F'[ |/]' '{printf "%s\n",$NF}')" && \
+	\cd "$(echo ${@} | sed -E 's/(\.git|/)$//g' |awk -F'[ |/]' '{printf "%s\n",$NF}')" && \
 	git submodule update -init --recursive --depth 1 --recommend-shallow && \
 	yokosen && \
 	ls
 }
 gic_n(){
 	git clone ${@} && \
-	\cd "$(echo ${@/.git}|awk -F'[ |/]' '{printf "%s\n",$NF}')" && \
+	\cd "$(echo ${@}| sed -E 's/(\.git|/)$//g' |awk -F'[ |/]' '{printf "%s\n",$NF}')" && \
 	git submodule update -init --recursive --depth 1 --recommend-shallow && \
 	yokosen && \
 	ls
 }
 
-aria2t() {
-    read "URL?URL:"
-    aria2c --seed-time 0 "$URL" && \rm *.torrent
-}
 dmv (){
-  if [[ "${2: -1}" == '/' ]]; then
-    if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
-      mkdir -p "${2/\/$(basename "${2}")}"
-    fi
-  else
-    if [[ "${2}" == */* ]]; then
-      if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
-        mkdir -p "${2/\/$(basename "${2}")}"
-      fi
-    fi
-  fi
-  mv "${1}" "${2}"
+	if [[ "${2: -1}" == '/' ]]; then
+		if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
+			mkdir -p "${2/\/$(basename "${2}")}"
+		fi
+	else
+		if [[ "${2}" == */* ]]; then
+			if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
+				mkdir -p "${2/\/$(basename "${2}")}"
+			fi
+		fi
+	fi
+	mv "${1}" "${2}"
 }
 dcp (){
-  if [[ "${2: -1}" == '/' ]]; then
-    if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
-      mkdir -p "${2/\/$(basename "${2}")}"
-    fi
-    else
-      if [[ "${2}" == */* ]]; then
-        if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
-          mkdir -p "${2/\/$(basename "${2}")}"
-        fi
-      fi
-  fi
-  cp -r "${1}" "${2}"
+	if [[ "${2: -1}" == '/' ]]; then
+		if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
+			mkdir -p "${2/\/$(basename "${2}")}"
+		fi
+		else
+			if [[ "${2}" == */* ]]; then
+				if [[ ! -d "${2/\/$(basename "${2}")}" ]]; then
+					mkdir -p "${2/\/$(basename "${2}")}"
+				fi
+			fi
+	fi
+	cp -r "${1}" "${2}"
 }
 
 alias urlt="unrar lt "

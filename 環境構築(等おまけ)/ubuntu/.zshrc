@@ -10,6 +10,7 @@ path=(
 	/commands/(N-/)
     ~/shellscripts/(N-/)
     ~/commands/(N-/)
+	~/commands/bin(N-/)
     ~/go/bin/(N-/)
     ~/.local/bin(N-/)
     /usr/local/cuda/bin/(N-/)
