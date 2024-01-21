@@ -1,3 +1,6 @@
+# これからこれを使おうとしている人へ
+[https://github.com/incompetence33/uma_js](https://github.com/incompetence33/uma_js)を使ったほうがおそらくいいです。
+
 # uma.sh
 このスクリプトはWindows10のwsl(ubuntu)で実行されることを想定して作られています。
 それ以外の環境では動作を確認していません。
